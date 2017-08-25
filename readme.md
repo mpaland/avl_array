@@ -87,6 +87,10 @@ avl.erase(2);       // erase key 2
 ```
 
 
+### Test and run
+For testing just compile, build and run the test suite located in `test/test_suite.cpp`. This uses the [catch](https://github.com/philsquared/Catch) framework for unit-tests, which is auto-adding main().
+
+
 ### Contributing
 
 1. Create an issue and describe your idea
