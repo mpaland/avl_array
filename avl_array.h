@@ -28,6 +28,9 @@
 // a static allocated array.
 //
 // usage:
+// #include "avl_array.h"
+// avl_array<int, int, int, 1024> avl;
+// avl.insert(1, 1);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -191,7 +194,9 @@ public:
   }
 
 
-  // clear
+  /**
+   * Clear the container
+   */
   inline void clear()
   {
     size_ = 0U;
@@ -203,7 +208,12 @@ public:
   }
 
 
-  // insert or update
+  /**
+   * Insert or update an element
+   * \param key The key to insert. If the key already exists it is updated
+   * \param val Value to insert or update
+   * \return True if the key was successfully inserted or updated, false if container is full
+   */
   bool insert(const key_type& key, const value_type& val)
   {
     if (root_ == INVALID_IDX) {
@@ -253,7 +263,7 @@ public:
   /**
    * Find an element
    * \param key The key to find
-   * \param val If key is found, the value is set
+   * \param val If key is found, the value of the element is set
    * \return True if key was found
    */
   inline bool find(const key_type& key, value_type& val) const
@@ -301,14 +311,22 @@ public:
   }
 
 
-  // remove node by key
+  /**
+   * Remove element by key
+   * \param key The key of the element to remove
+   * \return True if the element ws removed, false if key was not found
+   */
   inline bool erase(const key_type& key)
   {
     return erase(find(key));
   }
 
 
-  // remove node by iterator position
+  /**
+   * Remove element by iterator position
+   * \param position The iterator position of the element to remove
+   * \return True if the element ws removed, false if error
+   */
   bool erase(iterator position)
   {
     if (empty() || (position == end())) {
@@ -403,7 +421,10 @@ public:
   }
 
 
-  // integrity check
+  /**
+   * Integrity (self) check
+   * \return True if the tree intergity is correct, false if error (should not happen)
+   */   
   bool check() const
   {
     for (size_type i = 0U; i < size(); ++i)
@@ -421,7 +442,8 @@ public:
 
 
 private:
-  // helper functions
+  /////////////////////////////////////////////////////////////////////////////
+  // Helper functions
 
   // find parent element
   inline size_type find_parent(size_type node) const
