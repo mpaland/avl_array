@@ -38,7 +38,6 @@
 #define _AVL_ARRAY_H_
 
 #include <cstdint>
-#include <cstddef>
 
 
 /**
