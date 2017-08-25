@@ -28,7 +28,7 @@ Motivation of this container is to randomly insert, update and find elements in 
 
 
 ### History
-In computer science, an AVL tree is a self-balancing binary search tree with a primary rule: the height of two childrens's subtrees of any node differ at most by one. At no time they differ by more than one because rebalancing is done to ensure this rule.  
+In computer science, an [AVL tree](https://en.wikipedia.org/wiki/AVL_tree) is a self-balancing binary search tree with a primary rule: the height of two childrens's subtrees of any node differ at most by one. At no time they differ by more than one because rebalancing is done to ensure this rule.  
 Lookup, insertion and deletion take O(log n) time in both the average and worst case, where n is the number of nodes in the tree prior to the operation.  
 Insertions and deletions may require the tree to be rebalanced by one or more tree rotations.
 Other trees like Red–black trees may not guarantee O(log n) in worst case search.  
@@ -52,7 +52,7 @@ BUT: Problem is the movement of nodes in balancing operations after each insert 
 Recursive function calls (which can be eliminated of course) and out of tree insertions, which occur when the last tree row is used, are another problem.  
 After some tests it became very clear that this method is weak and complicated when inserting new nodes on a big tree.  
 Goal is to leave all the nodes in place once they are inserted. This can only be achieved by - you already know - changing pointer/index values.  
-My implementation of the AVL tree class here is inspired by a [blog of Keith Woods](https://bitlush.com/blog/efficient-avl-tree-in-c-sharp) and his high spped [implementation](https://github.com/bitlush/avl-tree-c-sharp) in C#. But instead of dynamic memory it uses a fixed array to store nodes and just two additional child indexes using the template given index type.  
+My implementation of the AVL tree class here is inspired by a [blog of Keith Woods](https://bitlush.com/blog/efficient-avl-tree-in-c-sharp) and his high speed [implementation](https://github.com/bitlush/avl-tree-c-sharp) in C#. But instead of dynamic memory it uses a fixed array to store nodes and just two additional child indexes using the template given index type.  
 So there's a storage overhead of (2 * sizeof(size_type) + balance_byte) * max_tree_size, e.g. (2 * 2 byte + 1) * 1023 = 5115 bytes for a 1023 node tree.  
 
 
