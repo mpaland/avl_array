@@ -131,10 +131,6 @@ class avl_array
         }
         idx_ = i;
       }
-      // end reached?
-      if (i == instance_.INVALID_IDX) {
-        idx_ = Size;
-      }
       return *this;
     }
 
