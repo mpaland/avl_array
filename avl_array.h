@@ -44,8 +44,7 @@
  * \param Key The key type. The type (class) must provide a 'greater than' operator
  * \param T The Data type
  * \param size_type Container size type
- * \param Size Container size, IMPORTANT: MUST BE 2^n - like 256, 512, 1024, 2048 etc. OR THE CONTAINER WILL FAIL!
- *             The AVL array can store (Size - 1) elements, e.g. if Size is 16, 15 elements can be stored as maximum
+ * \param Size Container size
  */
 template<typename Key, typename T, typename size_type, const size_type Size>
 class avl_array
@@ -57,12 +56,12 @@ class avl_array
   } child_type;
 
   // node storage, due to possible structure packing effects, single arrays are used instead of a 'node' structure 
-  Key         key_[Size - 1];     // node key
-  T           val_[Size - 1];     // node value
-  child_type  child_[Size - 1];   // node childs
-  std::int8_t balance_[Size - 1]; // subtree balance
-  size_type   root_;              // root node
-  size_type   size_;              // actual size
+  Key         key_[Size];       // node key
+  T           val_[Size];       // node value
+  child_type  child_[Size];     // node childs
+  std::int8_t balance_[Size];   // subtree balance
+  size_type   root_;            // root node
+  size_type   size_;            // actual size
 
   const size_type INVALID_IDX = Size;
 
@@ -189,7 +188,7 @@ public:
 
   inline const size_type max_size() const
   {
-    return Size - 1U;
+    return Size;
   }
 
 

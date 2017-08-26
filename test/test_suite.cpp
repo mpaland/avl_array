@@ -39,7 +39,7 @@ TEST_CASE("Capacity", "[capacity]" ) {
   avl_array<int, int, int, 1024> avl;
   REQUIRE(avl.empty());
   REQUIRE(avl.size() == 0U);
-  REQUIRE(avl.max_size() == 1023);
+  REQUIRE(avl.max_size() == 1024);
   avl.insert(1, 1);
   REQUIRE(!avl.empty());
   REQUIRE(avl.size() == 1U);
@@ -59,20 +59,20 @@ TEST_CASE("Max capacity, size", "[capacity]" ) {
   avl_array<int, int, int, 1024> avl;
   REQUIRE(avl.empty());
   REQUIRE(avl.size() == 0U);
-  REQUIRE(avl.max_size() == 1023U);
-  for (int n = 1; n < 1024; n++) {  
+  REQUIRE(avl.max_size() == 1024U);
+  for (int n = 1; n <= 1024; n++) {  
     REQUIRE(avl.insert(n, n));
     REQUIRE(avl.size() == n);
     REQUIRE(!avl.empty());
   }
-  REQUIRE(!avl.insert(1024, 1024));
-  REQUIRE(avl.size() == 1023U);
+  REQUIRE(!avl.insert(1025, 1025));
+  REQUIRE(avl.size() == 1024U);
 }
 
 
 TEST_CASE("Forward insert", "[insert]" ) {
-  avl_array<int, int, int, 1024> avl;    // -1 is invalid key
-  for (int n = 0; n < 1023; n++) {
+  avl_array<int, int, int, 1000> avl;
+  for (int n = 0; n < 1000; n++) {
     avl.insert(n, n);
     REQUIRE(avl.check());
   }
@@ -80,7 +80,7 @@ TEST_CASE("Forward insert", "[insert]" ) {
 
 
 TEST_CASE("Reverse insert", "[insert]" ) {
-  avl_array<int, int, int, 1024> avl;    // -1 is invalid key
+  avl_array<int, int, int, 1024> avl;
   for (int n = 1022; n >= 0; n--) {
     avl.insert(n, n);
     REQUIRE(avl.check());
@@ -159,31 +159,31 @@ TEST_CASE("Iterator ++", "[iterator]" ) {
 
 TEST_CASE("Find (iterator)", "[find]" ) {
   avl_array<int, int, std::uint16_t, 2048> avl;
-  for (int n = 0; n < 2047; n++) {
+  for (int n = 0; n < 2048; n++) {
     REQUIRE(avl.insert(n, n));
   }
-  REQUIRE(!avl.insert(2047, 2047));
+  REQUIRE(!avl.insert(2048, 2048));
 
-  for (int n = 0; n < 2047; n++) {
+  for (int n = 0; n < 2048; n++) {
     REQUIRE(*avl.find(n) == n);
   }
-  REQUIRE(avl.find(2047) == avl.end());
+  REQUIRE(avl.find(2048) == avl.end());
   REQUIRE(avl.find(3000) == avl.end());
 }
 
 
 TEST_CASE("Find (value)", "[find]" ) {
   avl_array<int, int, std::uint16_t, 2048> avl;
-  for (int n = 0; n < 2047; n++) {
+  for (int n = 0; n < 2048; n++) {
     REQUIRE(avl.insert(n, n));
   }
-  REQUIRE(!avl.insert(2047, 2047));
+  REQUIRE(!avl.insert(2048, 2048));
 
   int val;
-  for (int n = 0; n < 2047; n++) {
+  for (int n = 0; n < 2048; n++) {
     REQUIRE(avl.find(n, val));
   }
-  REQUIRE(!avl.find(2047, val));
+  REQUIRE(!avl.find(2048, val));
   REQUIRE(!avl.find(3000, val));
 }
 
@@ -208,7 +208,7 @@ TEST_CASE("Count", "[find]" ) {
 
 
 TEST_CASE("Random insert", "[insert]" ) {
-  avl_array<int, int, int, 2048> avl;    // -1 is invalid key
+  avl_array<int, int, int, 2048> avl;
   srand(0U);
   for (int n = 0; n < 2047; n++) {
     const int r = rand();
@@ -230,3 +230,86 @@ TEST_CASE("Random insert", "[insert]" ) {
   REQUIRE(avl.count(1000) == 0U);
 }
 
+
+TEST_CASE("Container size", "[size]" ) {
+  {
+    avl_array<int, int, int, 1> avl;
+    avl.insert(1, 1);
+    REQUIRE(avl.check());
+    avl.insert(2, 2);
+    REQUIRE(avl.check());
+    REQUIRE(avl.size() == 1U);
+    auto it = avl.begin();
+    REQUIRE(*it == 1);
+  }
+  {
+    avl_array<int, int, int, 2> avl;
+    avl.insert(1, 1);
+    avl.insert(2, 2);
+    REQUIRE(avl.check());
+    avl.insert(3, 3);
+    REQUIRE(avl.check());
+    REQUIRE(avl.size() == 2U);
+    auto it = avl.begin();
+    REQUIRE(*it == 1);
+    it++;
+    REQUIRE(*it == 2);
+  }
+  {
+    avl_array<int, int, int, 3> avl;
+    avl.insert(1, 1);
+    avl.insert(2, 2);
+    avl.insert(3, 3);
+    REQUIRE(avl.check());
+    avl.insert(4, 4);
+    REQUIRE(avl.check());
+    REQUIRE(avl.size() == 3U);
+    auto it = avl.begin();
+    REQUIRE(*it == 1);
+    it++;
+    REQUIRE(*it == 2);
+    it++;
+    REQUIRE(*it == 3);
+  }
+  {
+    avl_array<int, int, int, 4> avl;
+    avl.insert(1, 1);
+    avl.insert(2, 2);
+    avl.insert(3, 3);
+    avl.insert(4, 4);
+    REQUIRE(avl.check());
+    avl.insert(5, 5);
+    REQUIRE(avl.check());
+    REQUIRE(avl.size() == 4U);
+    auto it = avl.begin();
+    REQUIRE(*it == 1);
+    it++;
+    REQUIRE(*it == 2);
+    it++;
+    REQUIRE(*it == 3);
+    it++;
+    REQUIRE(*it == 4);
+  }
+  {
+    avl_array<int, int, int, 5> avl;
+    avl.insert(1, 1);
+    avl.insert(2, 2);
+    avl.insert(3, 3);
+    avl.insert(4, 4);
+    avl.insert(5, 5);
+    REQUIRE(avl.check());
+    avl.insert(6, 6);
+    REQUIRE(avl.check());
+    REQUIRE(avl.size() == 5U);
+    auto it = avl.begin();
+    REQUIRE(*it == 1);
+    it++;
+    REQUIRE(*it == 2);
+    it++;
+    REQUIRE(*it == 3);
+    it++;
+    REQUIRE(*it == 4);
+    it++;
+    REQUIRE(*it == 5);
+  }
+}
