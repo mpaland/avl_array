@@ -108,6 +108,10 @@ class avl_array
     // preincrement
     const tag_avl_array_iterator& operator++()
     {
+      // end reached?
+      if (idx_ >= Size) {
+        return *this;
+      }
       // take left most child of right child, if not existent, take parent
       size_type i = instance_.child_[idx_].right;
       if (i != instance_.INVALID_IDX) {
