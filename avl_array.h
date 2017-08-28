@@ -199,10 +199,6 @@ public:
   {
     size_ = 0U;
     root_ = INVALID_IDX;
-    // clear all nodes
-    for (size_type i = 0U; i < max_size(); ++i) {
-      child_[i] = { INVALID_IDX, INVALID_IDX };
-    }
   }
 
 
@@ -215,9 +211,10 @@ public:
   bool insert(const key_type& key, const value_type& val)
   {
     if (root_ == INVALID_IDX) {
-      key_[size_] = key;
-      val_[size_] = val;
+      key_[size_]     = key;
+      val_[size_]     = val;
       balance_[size_] = 0;
+      child_[size_]   = { INVALID_IDX, INVALID_IDX };
       root_ = size_++;
       return true;
     }
@@ -233,10 +230,11 @@ public:
           // container is full
           return false;
         }
-        key_[size_] = key;
-        val_[size_] = val;
+        key_[size_]     = key;
+        val_[size_]     = val;
         balance_[size_] = 0;
-        child_[i].left = size_++;
+        child_[size_]   = { INVALID_IDX, INVALID_IDX };
+        child_[i].left  = size_++;
         insert_balance(i, 1);
         return true;
       }
@@ -245,9 +243,10 @@ public:
           // container is full
           return false;
         }
-        key_[size_] = key;
-        val_[size_] = val;
+        key_[size_]     = key;
+        val_[size_]     = val;
         balance_[size_] = 0;
+        child_[size_]   = { INVALID_IDX, INVALID_IDX };
         child_[i].right = size_++;
         insert_balance(i, -1);
         return true;
