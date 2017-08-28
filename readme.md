@@ -2,15 +2,15 @@
 
 **avl_array** is a C++ STL (map) like container class to store data organzied as AVL tree in a **fixed size** array.
 
-Motivation of this container is to randomly insert, update and find elements in static allocated memory with a minimum of time.
+Motivation of this container is to randomly insert, update and find elements in static allocated memory with highest performance and in a minimum of time.
 
 ## Highligths
-- std::map like templated container class
+- `std::map` like templated container class
 - Static allocated memory
-- Highest speed, maximum performance and **no dependencies** (compared to std::map)
+- Ultra fast, maximum performance and **no dependencies** (compared to `std::map`)
 - Small memory overhead (arround 5 byte per node)
 - VERY clean and stable C++ code, LINT and L4 warning free, automotive ready
-- Very easy to use, just include "avl_array.h"_
+- Very easy to use, just include "avl_array.h"
 - Doxygen commented code
 - MIT license
 
@@ -46,11 +46,11 @@ Related nodes are accessed by the following calculation:
 | left    | 2 * i + 1   |
 | right   | 2 * i + 2   |
 
-You can find a basic implementation of this method from Willem [here](https://github.com/willemt/array-avl-tree), but it seems to have several bugs and my test cases did not pass at all.  
+You can find a basic implementation of this method from @willemt [here](https://github.com/willemt/array-avl-tree), but it seems to have several bugs and my test cases did not pass at all.  
 So I implemented an own class which looked very promising... regarding the memory layout.  
 BUT: Problem is the movement of nodes in balancing operations after each insert or delete. With increasing tree size a lot of nodes (values) need to be moved around in the array.
 Recursive function calls (which can be eliminated of course) and out of tree insertions, which occur when the last tree row is used, are another problem.  
-After some tests it became very clear that this method is weak and complicated when inserting new nodes on a big tree.  
+After some tests it became very clear that this method is weak and complicated when inserting new nodes in a big tree.  
 Goal is to leave all the nodes in place once they are inserted. This can only be achieved by - you already know - changing pointer/index values.  
 My implementation of the AVL tree class here is inspired by a [blog of Keith Woods](https://bitlush.com/blog/efficient-avl-tree-in-c-sharp) and his high speed [implementation](https://github.com/bitlush/avl-tree-c-sharp) in C#. But instead of dynamic memory it uses a fixed array to store nodes and just two additional child indexes using the template given index type.  
 So there's a storage overhead of (2 * sizeof(size_type) + balance_byte) * max_tree_size, e.g. (2 * 2 byte + 1) * 1023 = 5115 bytes for a 1023 node tree.  
@@ -58,28 +58,30 @@ So there's a storage overhead of (2 * sizeof(size_type) + balance_byte) * max_tr
 
 ### Usage
 
-Using the AVL array container is pretty simple. Most functions are very similar to the standard std::map container.
+Using the AVL array container is pretty simple. Most functions are very similar to the standard `std::map` container.
 
 ```c++
 #include <avl_array.h>
 
-// create a 2047 node tree with <int> as key and value types and <std::uint16_t> as size type
+// create a 2048 node tree with <int> as key and value types and <std::uint16_t> as size type
 avl_array<int, int, std::uint16_t, 2048> avl;
 
 // insert
 avl.insert(1, 1);   // set value of key 1 to 1
 avl.insert(2, 2);   // set value of key 2 to 2
+avl.insert(3, 3);   // set value of key 3 to 3
 
 // update
 avl.insert(2, 4);   // update value of key 2 to 4
 
 // find
-int val = *avl.find(2);       // as iterator
-bool res = avl.find(1, val);  // as data type
+int val = *avl.find(2);       // as iterator (returns 4)
+bool res = avl.find(1, val);  // as data type (returns 1)
 
-// using an iterator to access the keys in ascending order
+// using an iterator to access the values of the according keys in ascending key order
+// output is: 1 4 3
 for (auto it = avl.begin(); it != avl.end(); ++it) {
-  std::cout << *it;
+  std::cout << *it << " ";
 }
 
 // erase
