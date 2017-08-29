@@ -41,7 +41,7 @@
 
 
 /**
- * \param Key The key type. The type (class) must provide a 'greater than' operator
+ * \param Key The key type. The type (class) must provide a 'less than' and 'equal to' operator
  * \param T The Data type
  * \param size_type Container size type
  * \param Size Container size
@@ -203,7 +203,7 @@ public:
 
   /**
    * Insert or update an element
-   * \param key The key to insert. If the key already exists it is updated
+   * \param key The key to insert. If the key already exists, it is updated
    * \param val Value to insert or update
    * \return True if the key was successfully inserted or updated, false if container is full
    */
