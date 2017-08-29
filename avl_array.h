@@ -58,10 +58,10 @@ class avl_array
   // node storage, due to possible structure packing effects, single arrays are used instead of a 'node' structure 
   Key         key_[Size];       // node key
   T           val_[Size];       // node value
-  child_type  child_[Size];     // node childs
   std::int8_t balance_[Size];   // subtree balance
-  size_type   root_;            // root node
+  child_type  child_[Size];     // node childs
   size_type   size_;            // actual size
+  size_type   root_;            // root node
 
   const size_type INVALID_IDX = Size;
 
@@ -162,9 +162,8 @@ public:
   // ctor
   avl_array()
     : size_(0U)
-  {
-    clear();
-  }
+    , root_(Size)
+  { }
 
 
   // iterators
@@ -537,8 +536,8 @@ private:
   {
     key_[target]     = key_[source];
     val_[target]     = val_[source];
-    child_[target]   = child_[source];
     balance_[target] = balance_[source];
+    child_[target]   = child_[source];
   }
 
 
