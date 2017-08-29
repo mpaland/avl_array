@@ -429,10 +429,10 @@ public:
   {
     for (size_type i = 0U; i < size(); ++i)
     {
-      if ((child_[i].left != INVALID_IDX) && (key_[child_[i].left] >= key_[i])) {
+      if ((child_[i].left != INVALID_IDX) && (!(key_[child_[i].left] < key_[i]) || (key_[child_[i].left] == key_[i]))) {
         return false;
       }
-      if ((child_[i].right != INVALID_IDX) && (key_[child_[i].right] <= key_[i])) {
+      if ((child_[i].right != INVALID_IDX) && ((key_[child_[i].right] < key_[i]) || (key_[child_[i].right] == key_[i]))) {
         return false;
       }
     }
