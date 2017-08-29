@@ -224,31 +224,35 @@ public:
         val_[i] = val;
         return true;
       }
-      if ((child_[i].left == INVALID_IDX) && (key < key_[i])) {
-        if (size_ >= max_size()) {
-          // container is full
-          return false;
+      else if (key < key_[i]) {
+        if (child_[i].left == INVALID_IDX) {
+          if (size_ >= max_size()) {
+            // container is full
+            return false;
+          }
+          key_[size_]     = key;
+          val_[size_]     = val;
+          balance_[size_] = 0;
+          child_[size_]   = { INVALID_IDX, INVALID_IDX };
+          child_[i].left  = size_++;
+          insert_balance(i, 1);
+          return true;
         }
-        key_[size_]     = key;
-        val_[size_]     = val;
-        balance_[size_] = 0;
-        child_[size_]   = { INVALID_IDX, INVALID_IDX };
-        child_[i].left  = size_++;
-        insert_balance(i, 1);
-        return true;
       }
-      if ((child_[i].right == INVALID_IDX) && (key > key_[i])) {
-        if (size_ >= max_size()) {
-          // container is full
-          return false;
+      else {
+        if (child_[i].right == INVALID_IDX) {
+          if (size_ >= max_size()) {
+            // container is full
+            return false;
+          }
+          key_[size_]     = key;
+          val_[size_]     = val;
+          balance_[size_] = 0;
+          child_[size_]   = { INVALID_IDX, INVALID_IDX };
+          child_[i].right = size_++;
+          insert_balance(i, -1);
+          return true;
         }
-        key_[size_]     = key;
-        val_[size_]     = val;
-        balance_[size_] = 0;
-        child_[size_]   = { INVALID_IDX, INVALID_IDX };
-        child_[i].right = size_++;
-        insert_balance(i, -1);
-        return true;
       }
     }
     // node doesn't fit (should not happen) - discard it anyway
