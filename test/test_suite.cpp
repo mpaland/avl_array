@@ -150,9 +150,24 @@ TEST_CASE("Iterator ++", "[iterator]" ) {
     REQUIRE(*it == x++);
   }
   x = 0;
-  for (auto it = avl.begin(); it != avl.end(); ++it) {
+  auto it = avl.begin();
+  for (int n = 0; n <= 2000; n++, ++it) {
     REQUIRE(*it == x++);
   }
+
+  avl_array<int, int, int, 10> avl2;
+  for (int k = 10, t = 1; k < 20; k++, t += 3) {
+    REQUIRE(avl2.insert(k, t));
+  }
+  avl_array<int, int, int, 10>::iterator it2;
+  it2 = avl2.begin();
+  for (int k = 10, t = 1; k < 20; k++, t += 3, it2++) {
+    REQUIRE(*it2 == t);
+  }
+  it2++;
+  REQUIRE(it2 == avl2.end());
+  it2++;
+  REQUIRE(it2 == avl2.end());
 }
 
 
