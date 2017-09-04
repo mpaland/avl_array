@@ -128,7 +128,6 @@ TEST_CASE("Erase iterator", "[erase]" ) {
 }
 
 
-
 TEST_CASE("Iterator ++", "[iterator]" ) {
   avl_array<int, int, std::uint16_t, 2048> avl;
   for (int n = 1; n < 2048; n++) {
@@ -154,6 +153,20 @@ TEST_CASE("Iterator ++", "[iterator]" ) {
   for (auto it = avl.begin(); it != avl.end(); ++it) {
     REQUIRE(*it == x++);
   }
+}
+
+
+TEST_CASE("Iterator assignment", "[iterator]" ) {
+  avl_array<int, int, std::uint16_t, 2048> avl;
+  avl_array<int, int, std::uint16_t, 2048>::iterator it;
+  avl_array<int, int, std::uint16_t, 2048>::iterator it2;
+
+  avl.insert(1, 0xAA);
+
+  it = avl.begin();
+  REQUIRE(*it == 0xAA);
+  it2 = it;
+  REQUIRE(*it2 == 0xAA);
 }
 
 

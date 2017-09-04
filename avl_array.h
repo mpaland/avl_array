@@ -69,20 +69,20 @@ class avl_array
   // iterator class
   typedef class tag_avl_array_iterator
   {
-    avl_array&  instance_;    // array instance
+    avl_array*  instance_;    // array instance
     size_type   idx_;         // actual node
 
     friend avl_array;         // avl_array may access index pointer
 
   public:
     // ctor
-    tag_avl_array_iterator(avl_array& instance, size_type idx)
+    tag_avl_array_iterator(avl_array* instance = nullptr, size_type idx = 0)
       : instance_(instance)
       , idx_(idx)
     { 
-      if (!idx_) {
+      if (!!instance_ && !idx_) {
         // begin() - find smallest element, it's the farthest node left from root
-        for (size_type i = instance_.root_; i != instance_.INVALID_IDX; i = instance_.child_[i].left) {
+        for (size_type i = instance_->root_; i != instance_->INVALID_IDX; i = instance_->child_[i].left) {
           idx_ = i;
         }
       }
@@ -96,7 +96,7 @@ class avl_array
     }
 
     inline T& operator*() const
-    { return instance_.val_[idx_]; }
+    { return instance_->val_[idx_]; }
 
     inline bool operator==(const tag_avl_array_iterator& rhs) const
     { return idx_ == rhs.idx_; }
@@ -113,10 +113,10 @@ class avl_array
         return *this;
       }
       // take left most child of right child, if not existent, take parent
-      size_type i = instance_.child_[idx_].right;
-      if (i != instance_.INVALID_IDX) {
+      size_type i = instance_->child_[idx_].right;
+      if (i != instance_->INVALID_IDX) {
         // successor is the furthest left node of right subtree
-        for (; i != instance_.INVALID_IDX; i = instance_.child_[i].left) {
+        for (; i != instance_->INVALID_IDX; i = instance_->child_[i].left) {
           idx_ = i;
         }
       }
@@ -128,10 +128,10 @@ class avl_array
         // is the successor. if parent is NULL, the original node
         // was the last node inorder, and its successor
         // is the end of the list
-        i = instance_.find_parent(idx_);
-        while ((i != instance_.INVALID_IDX) && (idx_ == instance_.child_[i].right)) {
+        i = instance_->find_parent(idx_);
+        while ((i != instance_->INVALID_IDX) && (idx_ == instance_->child_[i].right)) {
           idx_ = i;
-          i = instance_.find_parent(idx_);
+          i = instance_->find_parent(idx_);
         }
         idx_ = i;
       }
@@ -168,10 +168,10 @@ public:
 
   // iterators
   iterator begin()
-  { return iterator(*this, 0U); }
+  { return iterator(this, 0U); }
 
   iterator end()
-  { return iterator(*this, Size); }
+  { return iterator(this, Size); }
 
 
   // capacity
@@ -290,11 +290,11 @@ public:
     for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {
       if (key == key_[i]) {
         // found key
-        return iterator(*this, i);
+        return iterator(this, i);
       }
     }
     // key not found, return end() iterator
-    return iterator(*this, Size);
+    return iterator(this, Size);
   }
 
 
