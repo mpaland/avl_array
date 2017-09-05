@@ -106,7 +106,7 @@ class avl_array
 
 
     // preincrement
-    const tag_avl_array_iterator& operator++()
+    tag_avl_array_iterator& operator++()
     {
       // end reached?
       if (idx_ >= Size) {
@@ -139,11 +139,11 @@ class avl_array
     }
 
     // postincrement
-    const tag_avl_array_iterator& operator++(int)
+    tag_avl_array_iterator operator++(int)
     {
-      tag_avl_array_iterator& _tmp = *this;
-      ++*this;
-      return _tmp;
+      tag_avl_array_iterator _copy = *this;
+      ++(*this);
+      return _copy;
     }
   } avl_array_iterator;
 
