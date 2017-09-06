@@ -355,12 +355,14 @@ public:
         }
       }
       else {
-        replace(node, right);
+        const size_type parent = find_parent(node);
+        child_[parent].left == node ? child_[parent].left = right : child_[parent].right = right;
         delete_balance(node, 0);
       }
     }
     else if (right == INVALID_IDX) {
-      replace(node, left);
+      const size_type parent = find_parent(node);
+      child_[parent].left == node ? child_[parent].left = left : child_[parent].right = left;
       delete_balance(node, 0);
     }
     else {
@@ -533,15 +535,6 @@ private:
       }
       node = parent;
     }
-  }
-
-
-  inline void replace(size_type target, size_type source)
-  {
-    key_[target]     = key_[source];
-    val_[target]     = val_[source];
-    balance_[target] = balance_[source];
-    child_[target]   = child_[source];
   }
 
 
