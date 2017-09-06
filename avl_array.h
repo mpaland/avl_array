@@ -168,7 +168,7 @@ public:
 
   // iterators
   iterator begin()
-  { return iterator(this, 0U); }
+  { return iterator(this, !empty() ? 0U : Size); }
 
   iterator end()
   { return iterator(this, Size); }
