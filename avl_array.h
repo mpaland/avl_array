@@ -139,7 +139,7 @@ class avl_array
     }
 
     // postincrement
-    tag_avl_array_iterator operator++(int)
+    inline tag_avl_array_iterator operator++(int)
     {
       tag_avl_array_iterator _copy = *this;
       ++(*this);
@@ -167,28 +167,22 @@ public:
 
 
   // iterators
-  iterator begin()
+  inline iterator begin()
   { return iterator(this, !empty() ? 0U : Size); }
 
-  iterator end()
+  inline iterator end()
   { return iterator(this, Size); }
 
 
   // capacity
   inline const size_type size() const
-  {
-    return size_;
-  }
+  { return size_; }
 
   inline const bool empty() const
-  {
-    return size() == 0U;
-  }
+  { return size_ == 0U; }
 
   inline const size_type max_size() const
-  {
-    return Size;
-  }
+  { return Size; }
 
 
   /**
