@@ -97,6 +97,8 @@ class avl_array
     inline bool operator!=(const tag_avl_array_iterator& rhs) const
     { return !(*this == rhs); }
 
+    inline Key& key() const
+    { return instance_->key_[idx_]; }
 
     // preincrement
     tag_avl_array_iterator& operator++()
