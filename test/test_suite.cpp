@@ -103,7 +103,7 @@ TEST_CASE("Random insert", "[insert]" ) {
   srand(0U);
   for (int n = 0; n < 10000; n++) {
     const int r = rand();
-    avl.insert(r, r);
+    REQUIRE(avl.insert(r, r));
     REQUIRE(avl.check());
   }
   avl.insert(1000, 1000);
@@ -112,13 +112,37 @@ TEST_CASE("Random insert", "[insert]" ) {
   avl.clear();
   int ra[] = { 38, 7719, 21238, 2437, 8855, 11797, 8365, 32285, 10450, 30612, 5853, 28100, 1142, 281, 20537, 15921, 8945, 26285, 2997, 14680, 20976, 31891, 21655, 25906, 18457, 1323 };
   for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
-    avl.insert(ra[n], ra[n]);
+    REQUIRE(avl.insert(ra[n], ra[n]));
     REQUIRE(avl.check());
   }
   for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
     REQUIRE(avl.count(ra[n]) == 1U);
   }
   REQUIRE(avl.count(1000) == 0U);
+}
+
+
+TEST_CASE("Random erase", "[erase]" ) {
+  avl_array<int, int, int, 10000> avl;
+  int arr[10000];
+  srand(0U);
+  for (int n = 0; n < 10000; n++) {
+    const int r = rand();
+    REQUIRE(avl.insert(r, r));
+    arr[n] = r;
+    REQUIRE(avl.check());
+  }
+
+  for (int n = 0; n < 10000; n++) {
+    if (arr[n] != *avl.find(arr[n]))
+    REQUIRE(arr[n] == *avl.find(arr[n]));
+  }
+
+  for (int n = 0; n < 10000; n++) {
+    avl.erase(avl.find(arr[n]));
+    REQUIRE(avl.check());
+  }
+  REQUIRE(avl.empty());
 }
 
 
@@ -182,11 +206,55 @@ TEST_CASE("Erase iterator 2", "[erase]" ) {
   }
   avl_array<int, int, std::uint16_t, 2048>::iterator it = avl.begin();
   for (int n = 0; n < 2000; n++) {
-    REQUIRE(avl.erase(it++));
+    int k = ++it.key();
+    REQUIRE(avl.erase(it));
+    it = avl.find(k);
     REQUIRE(avl.check());
   }
   REQUIRE(it == avl.end());
   REQUIRE(avl.empty());
+}
+
+
+TEST_CASE("Erase and insert", "[erase]" ) {
+  avl_array<int, int, std::uint16_t, 2000> avl;
+  for (int n = 0; n < 2000; n++) {
+    REQUIRE(avl.insert(n, n));
+    REQUIRE(*avl.find(n) == n);
+  }
+  for (int n = 1000; n >= 0; n--) {
+    REQUIRE(avl.erase(avl.find(n)));
+    REQUIRE(avl.size() == 999 + n);
+  }
+  int x = 1001;
+  for (auto it = avl.begin(); it != avl.end(); ++it) {
+    REQUIRE(*it == x++);
+  }
+
+  avl.clear();
+  for (int n = 0; n < 1000; n++) {
+    REQUIRE(avl.insert(n, n));
+    REQUIRE(*avl.find(n) == n);
+  }
+  REQUIRE(avl.check());
+  for (int start = 0; start < 50000; start += 1000) {
+    for (int n = start + 1000; n < start + 2000; n++) {
+      REQUIRE(avl.insert(n, n));
+      REQUIRE(*avl.find(n) == n);
+    }
+    REQUIRE(avl.check());
+    for (int n = start; n < start + 1000; n++) {
+      REQUIRE(avl.erase(avl.find(n)));
+      REQUIRE(avl.check());
+    }
+    // iterator check
+    x = start + 1000;
+    for (auto it = avl.begin(); it != avl.end(); ++it) {
+      REQUIRE(*it == x++);
+    }
+    REQUIRE(x == start + 2000);
+  }
+  REQUIRE(avl.check());
 }
 
 
@@ -309,7 +377,7 @@ TEST_CASE("Container size", "[size]" ) {
     avl_array<int, int, int, 1> avl;
     avl.insert(1, 1);
     REQUIRE(avl.check());
-    avl.insert(2, 2);
+    avl.insert(2, 2);     // not stored
     REQUIRE(avl.check());
     REQUIRE(avl.size() == 1U);
     auto it = avl.begin();
@@ -318,15 +386,20 @@ TEST_CASE("Container size", "[size]" ) {
   {
     avl_array<int, int, int, 2> avl;
     avl.insert(1, 1);
+    REQUIRE(avl.size() == 1U);
     avl.insert(2, 2);
     REQUIRE(avl.check());
-    avl.insert(3, 3);
+    avl.insert(3, 3);     // not stored
     REQUIRE(avl.check());
     REQUIRE(avl.size() == 2U);
     auto it = avl.begin();
     REQUIRE(*it == 1);
     it++;
     REQUIRE(*it == 2);
+    REQUIRE(avl.erase(1));
+    REQUIRE(avl.erase(2));
+    REQUIRE(avl.empty());
+    REQUIRE(avl.size() == 0U);
   }
   {
     avl_array<int, int, int, 3> avl;
