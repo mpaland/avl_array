@@ -76,17 +76,10 @@ class avl_array
 
   public:
     // ctor
-    tag_avl_array_iterator(avl_array* instance = nullptr, size_type idx = 0)
+    tag_avl_array_iterator(avl_array* instance = nullptr, size_type idx = 0U)
       : instance_(instance)
       , idx_(idx)
-    { 
-      if (!!instance_ && !idx_) {
-        // begin() - find smallest element, it's the farthest node left from root
-        for (size_type i = instance_->root_; i != instance_->INVALID_IDX; i = instance_->child_[i].left) {
-          idx_ = i;
-        }
-      }
-    }
+    { }
 
     inline tag_avl_array_iterator& operator=(const tag_avl_array_iterator& other)
     {
@@ -168,10 +161,17 @@ public:
 
   // iterators
   inline iterator begin()
-  { return iterator(this, !empty() ? 0U : Size); }
+  {
+    size_type i = INVALID_IDX;
+    if (root_ != INVALID_IDX) {
+      // find smallest element, it's the farthest node left from root
+      for (i = root_; child_[i].left != INVALID_IDX; i = child_[i].left);
+    }
+    return iterator(this, i);
+  }
 
   inline iterator end()
-  { return iterator(this, Size); }
+  { return iterator(this, INVALID_IDX); }
 
 
   // capacity
