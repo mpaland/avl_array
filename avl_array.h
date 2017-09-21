@@ -351,13 +351,13 @@ public:
       else {
         const size_type parent = find_parent(node);
         child_[parent].left == node ? child_[parent].left = right : child_[parent].right = right;
-        delete_balance(node, 0);
+        delete_balance(right, 0);
       }
     }
     else if (right == INVALID_IDX) {
       const size_type parent = find_parent(node);
       child_[parent].left == node ? child_[parent].left = left : child_[parent].right = left;
-      delete_balance(node, 0);
+      delete_balance(left, 0);
     }
     else {
       size_type successor = right;
