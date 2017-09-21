@@ -415,6 +415,22 @@ public:
       }
     }
     size_--;
+
+    // relocate the node at the end to the deleted node, if it's not the deleted one
+    if (node != size_) {
+      if (root_ == size_) {
+        root_ = node;
+      }
+      else {
+        const size_type parent = find_parent(size_);
+        if (parent != INVALID_IDX) {  // should never be invalid, but anyway for security
+          child_[parent].left == size_ ? child_[parent].left = node : child_[parent].right = node;
+        }
+      }
+      // move content
+      replace(node, size_);
+    }
+
     return true;
   }
 
@@ -455,6 +471,15 @@ private:
     }
     // parent not found
     return INVALID_IDX;
+  }
+
+
+  inline void replace(size_type target, size_type source)
+  {
+    key_[target]     = key_[source];
+    val_[target]     = val_[source];
+    balance_[target] = balance_[source];
+    child_[target]   = child_[source];
   }
 
 
