@@ -25,7 +25,7 @@
 // \brief avl_array class
 // This is an AVL tree implementation using an array as data structure
 // avl_array combines the insert and find advantages (log n) of an AVL tree with
-// a static allocated array.
+// a static allocated arrays and minimal storage overhead.
 //
 // usage:
 // #include "avl_array.h"
@@ -63,6 +63,7 @@ class avl_array
   size_type   size_;            // actual size
   size_type   root_;            // root node
 
+  // invalid index (like 'nullptr' in a pointer implementation)
   const size_type INVALID_IDX = Size;
 
 
@@ -290,7 +291,7 @@ public:
       }
     }
     // key not found, return end() iterator
-    return iterator(this, Size);
+    return end();
   }
 
 
@@ -320,6 +321,7 @@ public:
 
   /**
    * Remove element by iterator position
+   * THIS ERASE OPERATION INVALIDATES ALL ITERATORS!
    * \param position The iterator position of the element to remove
    * \return True if the element ws removed, false if error
    */
