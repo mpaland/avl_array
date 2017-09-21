@@ -441,12 +441,29 @@ public:
    */   
   bool check() const
   {
+    // check root
+    if (empty() && (root_ != INVALID_IDX)) {
+      // invalid root
+      return false;
+    }
+    if (size() && root_ >= size()) {
+      // root out of bounds
+      return false;
+    }
+
+    // check tree
     for (size_type i = 0U; i < size(); ++i)
     {
       if ((child_[i].left != INVALID_IDX) && (!(key_[child_[i].left] < key_[i]) || (key_[child_[i].left] == key_[i]))) {
+        // wrong key order to the left
         return false;
       }
       if ((child_[i].right != INVALID_IDX) && ((key_[child_[i].right] < key_[i]) || (key_[child_[i].right] == key_[i]))) {
+        // wrong key order to the right
+        return false;
+      }
+      if ((i != root_) && (find_parent(i) == INVALID_IDX)) {
+        // no parent
         return false;
       }
     }
