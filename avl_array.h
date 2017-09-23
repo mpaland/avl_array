@@ -56,12 +56,12 @@ class avl_array
   } child_type;
 
   // node storage, due to possible structure packing effects, single arrays are used instead of a 'node' structure 
-  Key         key_[Size];       // node key
-  T           val_[Size];       // node value
-  std::int8_t balance_[Size];   // subtree balance
-  child_type  child_[Size];     // node childs
-  size_type   size_;            // actual size
-  size_type   root_;            // root node
+  Key           key_[Size];                 // node key
+  T             val_[Size];                 // node value
+  child_type    child_[Size];               // node childs
+  std::uint8_t  balance_[(Size / 4) + 1];   // subtree balance, bit coded
+  size_type     size_;                      // actual size
+  size_type     root_;                      // root node
 
   // invalid index (like 'nullptr' in a pointer implementation)
   const size_type INVALID_IDX = Size;
@@ -207,10 +207,10 @@ public:
   bool insert(const key_type& key, const value_type& val)
   {
     if (root_ == INVALID_IDX) {
-      key_[size_]     = key;
-      val_[size_]     = val;
-      balance_[size_] = 0;
-      child_[size_]   = { INVALID_IDX, INVALID_IDX };
+      key_[size_]   = key;
+      val_[size_]   = val;
+      child_[size_] = { INVALID_IDX, INVALID_IDX };
+      set_balance(size_, 0);
       root_ = size_++;
       return true;
     }
@@ -227,11 +227,11 @@ public:
             // container is full
             return false;
           }
-          key_[size_]     = key;
-          val_[size_]     = val;
-          balance_[size_] = 0;
-          child_[size_]   = { INVALID_IDX, INVALID_IDX };
-          child_[i].left  = size_++;
+          key_[size_]    = key;
+          val_[size_]    = val;
+          child_[size_]  = { INVALID_IDX, INVALID_IDX };
+          child_[i].left = size_;
+          set_balance(size_++, 0);
           insert_balance(i, 1);
           return true;
         }
@@ -244,9 +244,9 @@ public:
           }
           key_[size_]     = key;
           val_[size_]     = val;
-          balance_[size_] = 0;
           child_[size_]   = { INVALID_IDX, INVALID_IDX };
-          child_[i].right = size_++;
+          child_[i].right = size_;
+          set_balance(size_++, 0);
           insert_balance(i, -1);
           return true;
         }
@@ -368,7 +368,7 @@ public:
       if (child_[successor].left == INVALID_IDX) {
         const size_type parent = find_parent(node);
         child_[successor].left = left;
-        balance_[successor] = balance_[node];
+        set_balance(successor, get_balance(node));
         if (node == root_) {
           root_ = successor;
         }
@@ -400,7 +400,7 @@ public:
 
         child_[successor].left  = left;
         child_[successor].right = right;
-        balance_[successor]     = balance_[node];
+        set_balance(successor, get_balance(node));
 
         if (node == root_) {
           root_ = successor;
@@ -497,21 +497,43 @@ private:
   {
     key_[target]     = key_[source];
     val_[target]     = val_[source];
-    balance_[target] = balance_[source];
     child_[target]   = child_[source];
+    set_balance(target, get_balance(source));
   }
 
 
-  void insert_balance(size_type node, std::int8_t balance)
+  inline void set_balance(const size_type node, const std::int_fast8_t value) {
+    std::uint8_t v;
+    assert(value != 2);
+    switch (value) {
+      case 0  : v = 0U; break;
+      case 1  : v = 1U; break;
+      default : v = 2U; break;
+    }
+    balance_[node >> 2U] = (balance_[node >> 2U] & (~(0x03U << (node & 0x03U)))) | (v << (node & 0x03U));
+  }
+
+
+  inline std::int_fast8_t get_balance(const size_type node) const {
+    switch (balance_[node >> 2U] >> (node & 0x03U)) {
+      case 0U : return  0; break;
+      case 1U : return  1; break;
+      default : return -1; break;
+    }
+  }
+
+
+  void insert_balance(size_type node, std::int_fast8_t balance)
   {
     while (node != INVALID_IDX) {
-      balance = (balance_[node] += balance);
+      balance = get_balance(node) + balance;
+      set_balance(node, balance);
      
       if (balance == 0) {
         return;
       }
       else if (balance == 2) {
-        if (balance_[child_[node].left] == 1) {
+        if (get_balance(child_[node].left) == 1) {
           rotate_right(node);
         }
         else {
@@ -520,7 +542,7 @@ private:
         return;
       }
       else if (balance == -2) {
-        if (balance_[child_[node].right] == -1) {
+        if (get_balance(child_[node].right) == -1) {
           rotate_left(node);
         }
         else {
@@ -538,15 +560,15 @@ private:
   }
 
 
-  void delete_balance(size_type node, std::int8_t balance)
+  void delete_balance(size_type node, std::int_fast8_t balance)
   {
     while (node != INVALID_IDX) {
-      balance = (balance_[node] += balance);
-
+      balance = get_balance(node) + balance;
+      set_balance(node, balance);
       if (balance == 2) {
-        if (balance_[child_[node].left] >= 0) {
+        if (get_balance(child_[node].left) >= 0) {
           node = rotate_right(node);
-          if (balance_[node] == -1) {
+          if (get_balance(node) == -1) {
             return;
           }
         }
@@ -555,9 +577,9 @@ private:
         }
       }
       else if (balance == -2) {
-        if (balance_[child_[node].right] <= 0) {
+        if (get_balance(child_[node].right) <= 0) {
           node = rotate_left(node);
-          if (balance_[node] == 1) {
+          if (get_balance(node) == 1) {
             return;
           }
         }
@@ -597,8 +619,8 @@ private:
       child_[parent].left = right;
     }
 
-    balance_[right]++;
-    balance_[node] = -balance_[right];
+    set_balance(right, get_balance(right) + 1);
+    set_balance(node,  get_balance(right) * -1);
 
     return right;
   }
@@ -623,8 +645,8 @@ private:
       child_[parent].right = left;
     }
 
-    balance_[left]--;
-    balance_[node] = -balance_[left];
+    set_balance(left, get_balance(left) - 1);
+    set_balance(node, get_balance(left) * -1);
 
     return left;
   }
@@ -653,19 +675,19 @@ private:
       child_[parent].right = left_right;
     }
 
-    if (balance_[left_right] == -1) {
-      balance_[node] = 0;
-      balance_[left] = 1;
+    if (get_balance(left_right) == -1) {
+      set_balance(node, 0);
+      set_balance(left, 1);
     }
-    else if (balance_[left_right] == 0) {
-      balance_[node] = 0;
-      balance_[left] = 0;
+    else if (get_balance(left_right) == 0) {
+      set_balance(node, 0);
+      set_balance(left, 0);
     }
     else {
-      balance_[node] = -1;
-      balance_[left] = 0;
+      set_balance(node, -1);
+      set_balance(left,  0);
     }
-    balance_[left_right] = 0;
+    set_balance(left_right, 0);
 
     return left_right;
   }
@@ -694,19 +716,19 @@ private:
       child_[parent].left = right_left;
     }
 
-    if (balance_[right_left] == 1) {
-      balance_[node]  = 0;
-      balance_[right] = -1;
+    if (get_balance(right_left) == 1) {
+      set_balance(node, 0);
+      set_balance(right, -1);
     }
-    else if (balance_[right_left] == 0) {
-      balance_[node]  = 0;
-      balance_[right] = 0;
+    else if (get_balance(right_left) == 0) {
+      set_balance(node, 0);
+      set_balance(right, 0);
     }
     else {
-      balance_[node]  = 1;
-      balance_[right] = 0;
+      set_balance(node,  1);
+      set_balance(right, 0);
     }
-    balance_[right_left] = 0;
+    set_balance(right_left, 0);
 
     return right_left;
   }
