@@ -47,7 +47,7 @@
  * \param Size Container size
  * \param Fast If true every node stores an extra parent index. This increases memory but speed up insert/erase by factor 10
  */
-template<typename Key, typename T, typename size_type, const size_type Size, const bool Fast = false>
+template<typename Key, typename T, typename size_type, const size_type Size, const bool Fast = true>
 class avl_array
 {
   // child index pointer class
@@ -67,7 +67,6 @@ class avl_array
  
   // invalid index (like 'nullptr' in a pointer implementation)
   static const size_type INVALID_IDX = Size;
-
 
   // iterator class
   typedef class tag_avl_array_iterator
