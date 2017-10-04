@@ -23,9 +23,13 @@
 // THE SOFTWARE.
 //
 // \brief avl_array class
-// This is an AVL tree implementation using an array as data structure
-// avl_array combines the insert and find advantages (log n) of an AVL tree with
-// a static allocated arrays and minimal storage overhead.
+// This is an AVL tree implementation using an array as data structure.
+// avl_array combines the insert/delete and find advantages (log n) of an AVL tree
+// with a static allocated arrays and minimal storage overhead.
+// If memory is critical the 'Fast' template parameter can be set to false which
+// removes the parent member of every node. This saves sizeof(size_type) * Size bytes,
+// but slowes down the insert and delete operation by factor 10 due to 'parent search'.
+// The find opeartion is not affected cause finding doesn't need a parent.
 //
 // usage:
 // #include "avl_array.h"
