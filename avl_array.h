@@ -94,15 +94,21 @@ class avl_array
       return *this;
     }
 
-    inline T& operator*() const
-    { return instance_->val_[idx_]; }
-
     inline bool operator==(const tag_avl_array_iterator& rhs) const
     { return idx_ == rhs.idx_; }
 
     inline bool operator!=(const tag_avl_array_iterator& rhs) const
     { return !(*this == rhs); }
 
+    // dereference - access value
+    inline T& operator*() const
+    { return val(); }
+
+    // access value
+    inline T& val() const
+    { return instance_->val_[idx_]; }
+
+    // access key
     inline Key& key() const
     { return instance_->key_[idx_]; }
 
