@@ -1,14 +1,14 @@
 # AVL Array container class
 
-**avl_array** is a C++ STL (map) like container class to store data organzied as AVL tree in a **fixed size** array.
+**avl_array** is a C++ STL (map) like container class to store key-value data organzied as AVL tree in a **fixed size** array.
 
-Motivation of this container is to randomly insert, update and find elements in static allocated memory with highest performance and in a minimum of time.
+Motivation of this container is to insert, update, delete and find random key-value elements in *static allocated* memory with highest performance and in a minimum of time.
 
 ## Highligths
 - `std::map` like templated container class
 - Static allocated memory
 - Ultra fast, maximum performance and **no dependencies** (compared to `std::map`)
-- Small memory overhead (arround 5 byte per node)
+- Small memory overhead (arround 5 byte per node in slow-mode)
 - VERY clean and stable C++ code, LINT and L4 warning free, automotive ready
 - Very easy to use, just include "avl_array.h"
 - Doxygen commented code
@@ -17,21 +17,21 @@ Motivation of this container is to randomly insert, update and find elements in 
 
 ### Comparison of different access containers
 
-| Container | Operation | Worst Case Cost |
-|-----------|-----------|:---------------:|
-| Unsorted Array   | insert        | O(1)               |
-|                  | find / update | O(n)               |
-| Sorted Array     | insert        | O(n log n) (via Heapsort) |
-|                  | find / update | O(log n)           |
-| AVL Array        | insert        | O(log n)           |
-|                  | find / update | O(log n)           |
+| Container | Operation | Worst Case Cost | add. memory overhead |
+|-----------|-----------|:---------------:|----------------------|
+| Unsorted Array   | insert / delete | O(n)               | none    |
+|                  | find / update   | O(n)               |      |
+| Sorted Array     | insert / delete | O(n log n) (via Heapsort) | none |
+|                  | find / update   | O(log n)           |      |
+| **AVL Array**    | insert /delete  | O(log n)           | min. 5 byte / element
+|                  | find / update   | O(log n)           |      |
 
 
 ### History
 In computer science, an [AVL tree](https://en.wikipedia.org/wiki/AVL_tree) is a self-balancing binary search tree with a primary rule: the height of two childrens's subtrees of any node differ at most by one. At no time they differ by more than one because rebalancing is done to ensure this rule.  
 Lookup, insertion and deletion take O(log n) time in both the average and worst case, where n is the number of nodes in the tree prior to the operation.  
 Insertions and deletions may require the tree to be rebalanced by one or more tree rotations.
-Other trees like Red–black trees may not guarantee O(log n) in worst case search.  
+Other trees like Redï¿½black trees may not guarantee O(log n) in worst case search.  
   
 There are a lot of AVL implementations around the internet which are pointer based, so that every node element has to store additional pointers to its parent, left and right child nodes.  
 Advantage of this method is slightly fast rebalancing/rotation because only some pointers need to be exchanged and the node values remain in place.  
