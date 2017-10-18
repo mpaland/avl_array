@@ -23,9 +23,13 @@
 // THE SOFTWARE.
 //
 // \brief avl_array class
-// This is an AVL tree implementation using an array as data structure
-// avl_array combines the insert and find advantages (log n) of an AVL tree with
-// a static allocated arrays and minimal storage overhead.
+// This is an AVL tree implementation using an array as data structure.
+// avl_array combines the insert/delete and find advantages (log n) of an AVL tree
+// with a static allocated arrays and minimal storage overhead.
+// If memory is critical the 'Fast' template parameter can be set to false which
+// removes the parent member of every node. This saves sizeof(size_type) * Size bytes,
+// but slowes down the insert and delete operation by factor 10 due to 'parent search'.
+// The find opeartion is not affected cause finding doesn't need a parent.
 //
 // usage:
 // #include "avl_array.h"
@@ -45,8 +49,9 @@
  * \param T The Data type
  * \param size_type Container size type
  * \param Size Container size
+ * \param Fast If true every node stores an extra parent index. This increases memory but speed up insert/erase by factor 10
  */
-template<typename Key, typename T, typename size_type, const size_type Size>
+template<typename Key, typename T, typename size_type, const size_type Size, const bool Fast = true>
 class avl_array
 {
   // child index pointer class
@@ -56,16 +61,16 @@ class avl_array
   } child_type;
 
   // node storage, due to possible structure packing effects, single arrays are used instead of a 'node' structure 
-  Key         key_[Size];       // node key
-  T           val_[Size];       // node value
-  std::int8_t balance_[Size];   // subtree balance
-  child_type  child_[Size];     // node childs
-  size_type   size_;            // actual size
-  size_type   root_;            // root node
-
+  Key         key_[Size];                 // node key
+  T           val_[Size];                 // node value
+  std::int8_t balance_[Size];             // subtree balance
+  child_type  child_[Size];               // node childs
+  size_type   size_;                      // actual size
+  size_type   root_;                      // root node
+  size_type   parent_[Fast ? Size : 1];   // node parent, use one element if not needed (zero sized array is not allowed)
+ 
   // invalid index (like 'nullptr' in a pointer implementation)
-  const size_type INVALID_IDX = Size;
-
+  static const size_type INVALID_IDX = Size;
 
   // iterator class
   typedef class tag_avl_array_iterator
@@ -89,15 +94,21 @@ class avl_array
       return *this;
     }
 
-    inline T& operator*() const
-    { return instance_->val_[idx_]; }
-
     inline bool operator==(const tag_avl_array_iterator& rhs) const
     { return idx_ == rhs.idx_; }
 
     inline bool operator!=(const tag_avl_array_iterator& rhs) const
     { return !(*this == rhs); }
 
+    // dereference - access value
+    inline T& operator*() const
+    { return val(); }
+
+    // access value
+    inline T& val() const
+    { return instance_->val_[idx_]; }
+
+    // access key
     inline Key& key() const
     { return instance_->key_[idx_]; }
 
@@ -124,10 +135,10 @@ class avl_array
         // is the successor. if parent is NULL, the original node
         // was the last node inorder, and its successor
         // is the end of the list
-        i = instance_->find_parent(idx_);
+        i = instance_->get_parent(idx_);
         while ((i != instance_->INVALID_IDX) && (idx_ == instance_->child_[i].right)) {
           idx_ = i;
-          i = instance_->find_parent(idx_);
+          i = instance_->get_parent(idx_);
         }
         idx_ = i;
       }
@@ -211,6 +222,7 @@ public:
       val_[size_]     = val;
       balance_[size_] = 0;
       child_[size_]   = { INVALID_IDX, INVALID_IDX };
+      set_parent(size_, INVALID_IDX);
       root_ = size_++;
       return true;
     }
@@ -231,6 +243,7 @@ public:
           val_[size_]     = val;
           balance_[size_] = 0;
           child_[size_]   = { INVALID_IDX, INVALID_IDX };
+          set_parent(size_, i);
           child_[i].left  = size_++;
           insert_balance(i, 1);
           return true;
@@ -246,6 +259,7 @@ public:
           val_[size_]     = val;
           balance_[size_] = 0;
           child_[size_]   = { INVALID_IDX, INVALID_IDX };
+          set_parent(size_, i);
           child_[i].right = size_++;
           insert_balance(i, -1);
           return true;
@@ -341,7 +355,7 @@ public:
           root_ = INVALID_IDX;
         }
         else {
-          const size_type parent = find_parent(node);
+          const size_type parent = get_parent(node);
           if (child_[parent].left == node) {
             child_[parent].left = INVALID_IDX;
             delete_balance(parent, -1);
@@ -353,22 +367,31 @@ public:
         }
       }
       else {
-        const size_type parent = find_parent(node);
+        const size_type parent = get_parent(node);
         child_[parent].left == node ? child_[parent].left = right : child_[parent].right = right;
+
+        set_parent(right, parent);
+
         delete_balance(right, 0);
       }
     }
     else if (right == INVALID_IDX) {
-      const size_type parent = find_parent(node);
+      const size_type parent = get_parent(node);
       child_[parent].left == node ? child_[parent].left = left : child_[parent].right = left;
+
+      set_parent(left, parent);
+
       delete_balance(left, 0);
     }
     else {
       size_type successor = right;
       if (child_[successor].left == INVALID_IDX) {
-        const size_type parent = find_parent(node);
+        const size_type parent = get_parent(node);
         child_[successor].left = left;
         balance_[successor] = balance_[node];
+        set_parent(successor, parent);
+        set_parent(left, successor);
+
         if (node == root_) {
           root_ = successor;
         }
@@ -387,8 +410,8 @@ public:
           successor = child_[successor].left;
         }
 
-        const size_type parent           = find_parent(node);
-        const size_type successor_parent = find_parent(successor);
+        const size_type parent           = get_parent(node);
+        const size_type successor_parent = get_parent(successor);
         const size_type successor_right  = child_[successor].right;
 
         if (child_[successor_parent].left == successor) {
@@ -398,6 +421,10 @@ public:
           child_[successor_parent].right = successor_right;
         }
 
+        set_parent(successor_right, successor_parent);
+        set_parent(successor, parent);
+        set_parent(right, successor);
+        set_parent(left, successor);
         child_[successor].left  = left;
         child_[successor].right = right;
         balance_[successor]     = balance_[node];
@@ -424,11 +451,16 @@ public:
         root_ = node;
       }
       else {
-        const size_type parent = find_parent(size_);
+        const size_type parent = get_parent(size_);
         if (parent != INVALID_IDX) {  // should never be invalid, but anyway for security
           child_[parent].left == size_ ? child_[parent].left = node : child_[parent].right = node;
         }
       }
+
+      // correct childs parent
+      set_parent(child_[size_].left,  node);
+      set_parent(child_[size_].right, node);
+
       // move content
       replace(node, size_);
     }
@@ -439,7 +471,7 @@ public:
 
   /**
    * Integrity (self) check
-   * \return True if the tree intergity is correct, false if error (should not happen)
+   * \return True if the tree intergity is correct, false if error (should not happen normally)
    */   
   bool check() const
   {
@@ -464,8 +496,12 @@ public:
         // wrong key order to the right
         return false;
       }
-      if ((i != root_) && (find_parent(i) == INVALID_IDX)) {
+      if ((i != root_) && (get_parent(i) == INVALID_IDX)) {
         // no parent
+        return false;
+      }
+      if ((i == root_) && (get_parent(i) != INVALID_IDX)) {
+        // invalid root parent
         return false;
       }
     }
@@ -474,22 +510,38 @@ public:
   }
 
 
-private:
   /////////////////////////////////////////////////////////////////////////////
   // Helper functions
+private:
 
   // find parent element
-  inline size_type find_parent(size_type node) const
+  inline size_type get_parent(size_type node) const
   {
-    const Key key_node = key_[node];
-    for (size_type i = root_; i != INVALID_IDX; i = (key_node < key_[i]) ? child_[i].left : child_[i].right) {
-      if ((child_[i].left == node) || (child_[i].right == node)) {
-        // found parent
-        return i;
+    if (Fast) {
+      return parent_[node];
+    }
+    else {
+      const Key key_node = key_[node];
+      for (size_type i = root_; i != INVALID_IDX; i = (key_node < key_[i]) ? child_[i].left : child_[i].right) {
+        if ((child_[i].left == node) || (child_[i].right == node)) {
+          // found parent
+          return i;
+        }
+      }
+      // parent not found
+      return INVALID_IDX;
+    }
+  }
+
+
+  // set parent element (only in Fast version)
+  inline void set_parent(size_type node, size_type parent)
+  {
+    if (Fast) {
+      if (node != INVALID_IDX) {
+        parent_[node] = parent;
       }
     }
-    // parent not found
-    return INVALID_IDX;
   }
 
 
@@ -499,6 +551,7 @@ private:
     val_[target]     = val_[source];
     balance_[target] = balance_[source];
     child_[target]   = child_[source];
+    set_parent(target, get_parent(source));
   }
 
 
@@ -529,7 +582,7 @@ private:
         return;
       }
      
-      const size_type parent = find_parent(node);
+      const size_type parent = get_parent(node);
       if (parent != INVALID_IDX) {
         balance = child_[parent].left == node ? 1 : -1;
       }
@@ -569,7 +622,7 @@ private:
         return;
       }
 
-      const size_type parent = find_parent(node);
+      const size_type parent = get_parent(node);
       if (parent != INVALID_IDX) {
         balance = child_[parent].left == node ? -1 : 1;
       }
@@ -582,8 +635,11 @@ private:
   {
     const size_type right      = child_[node].right;
     const size_type right_left = child_[right].left;
-    const size_type parent     = find_parent(node);
+    const size_type parent     = get_parent(node);
 
+    set_parent(right, parent);
+    set_parent(node, right);
+    set_parent(right_left, node);
     child_[right].left = node;
     child_[node].right = right_left;
 
@@ -608,8 +664,11 @@ private:
   {
     const size_type left       = child_[node].left;
     const size_type left_right = child_[left].right;
-    const size_type parent     = find_parent(node);
+    const size_type parent     = get_parent(node);
 
+    set_parent(left, parent);
+    set_parent(node, left);
+    set_parent(left_right, node);
     child_[left].right = node;
     child_[node].left  = left_right;
 
@@ -636,8 +695,13 @@ private:
     const size_type left_right       = child_[left].right;
     const size_type left_right_right = child_[left_right].right;
     const size_type left_right_left  = child_[left_right].left;
-    const size_type parent           = find_parent(node);
+    const size_type parent           = get_parent(node);
 
+    set_parent(left_right, parent);
+    set_parent(left, left_right);
+    set_parent(node, left_right);
+    set_parent(left_right_right, node);
+    set_parent(left_right_left, left);
     child_[node].left        = left_right_right;
     child_[left].right       = left_right_left;
     child_[left_right].left  = left;
@@ -677,8 +741,13 @@ private:
     const size_type right_left       = child_[right].left;
     const size_type right_left_left  = child_[right_left].left;
     const size_type right_left_right = child_[right_left].right;
-    const size_type parent           = find_parent(node);
+    const size_type parent           = get_parent(node);
 
+    set_parent(right_left, parent);
+    set_parent(right, right_left);
+    set_parent(node, right_left);
+    set_parent(right_left_left, node);
+    set_parent(right_left_right, right);
     child_[node].right       = right_left_left;
     child_[right].left       = right_left_right;
     child_[right_left].right = right;
