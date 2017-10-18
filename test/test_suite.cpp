@@ -122,8 +122,56 @@ TEST_CASE("Random insert", "[insert]" ) {
 }
 
 
+TEST_CASE("Random insert - slow mode", "[insert]" ) {
+  avl_array<int, int, int, 10000, false> avl;
+  srand(0U);
+  for (int n = 0; n < 10000; n++) {
+    const int r = rand();
+    REQUIRE(avl.insert(r, r));
+    REQUIRE(avl.check());
+  }
+  avl.insert(1000, 1000);
+  REQUIRE(avl.check());
+
+  avl.clear();
+  int ra[] = { 38, 7719, 21238, 2437, 8855, 11797, 8365, 32285, 10450, 30612, 5853, 28100, 1142, 281, 20537, 15921, 8945, 26285, 2997, 14680, 20976, 31891, 21655, 25906, 18457, 1323 };
+  for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
+    REQUIRE(avl.insert(ra[n], ra[n]));
+    REQUIRE(avl.check());
+  }
+  for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
+    REQUIRE(avl.count(ra[n]) == 1U);
+  }
+  REQUIRE(avl.count(1000) == 0U);
+}
+
+
 TEST_CASE("Random erase", "[erase]" ) {
   avl_array<int, int, int, 10000> avl;
+  int arr[10000];
+  srand(0U);
+  for (int n = 0; n < 10000; n++) {
+    const int r = rand();
+    REQUIRE(avl.insert(r, r));
+    arr[n] = r;
+    REQUIRE(avl.check());
+  }
+
+  for (int n = 0; n < 10000; n++) {
+    if (arr[n] != *avl.find(arr[n]))
+    REQUIRE(arr[n] == *avl.find(arr[n]));
+  }
+
+  for (int n = 0; n < 10000; n++) {
+    avl.erase(avl.find(arr[n]));
+    REQUIRE(avl.check());
+  }
+  REQUIRE(avl.empty());
+}
+
+
+TEST_CASE("Random erase - slow mode", "[erase]" ) {
+  avl_array<int, int, int, 10000, false> avl;
   int arr[10000];
   srand(0U);
   for (int n = 0; n < 10000; n++) {
