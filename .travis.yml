@@ -1,0 +1,49 @@
+# Use a C++11 distro
+dist: trusty
+sudo: required
+
+# Enable C++ support
+language: cpp
+
+# Compiler selection
+compiler: gcc
+
+# addons
+addons:
+  apt:
+    packages:
+      - gcc-6
+      - g++-6
+    sources:
+      - ubuntu-toolchain-r-test
+
+before_install:
+  # install coveralls
+  - pip install --user cpp-coveralls
+
+# Active branches
+branches:
+  only:
+   - master
+
+script:
+  # Link gcc-6 and g++-6 to their standard commands
+  - sudo rm /usr/bin/gcc
+  - sudo rm /usr/bin/g++
+  - sudo ln -s /usr/bin/gcc-6 /usr/bin/gcc
+  - sudo ln -s /usr/bin/g++-6 /usr/bin/g++
+  # Export CC and CXX
+  - export CC=/usr/bin/gcc-6
+  - export CXX=/usr/bin/g++-6
+  # Check versions of gcc, g++
+  - gcc -v && g++ -v
+  # Run build commands
+  - make
+  # execute the text suite
+  - bin/test_suite -d yes
+  # coverall profiling
+  - tmp/cov/test_suite
+
+after_success:
+  # Report to coveralls
+  - coveralls --build-root ${TRAVIS_BUILD_DIR} --include avl_array.h --gcov 'gcov-6' --gcov-options '\-lp'
