@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/mpaland/avl_array/badge.svg?branch=master)](https://coveralls.io/github/mpaland/avl_array?branch=master)
 [![Github Issues](https://img.shields.io/github/issues/mpaland/avl_array.svg)](http://github.com/mpaland/avl_array/issues)
 [![Github Releases](https://img.shields.io/github/release/mpaland/avl_array.svg)](https://github.com/mpaland/avl_array/releases)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/mpaland/avl_array/master/LICENSE.MIT)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/mpaland/avl_array/master/LICENSE)
 
 **avl_array** is a templated C++ (STL map like) container class that stores key-value data organzied as AVL-tree in a **fixed size** array.
 
