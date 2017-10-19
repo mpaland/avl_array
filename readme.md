@@ -98,10 +98,12 @@ avl.erase(2);       // erase key 2
 
 ### Fast mode
 This class has two compile time selectable modes as template parameter `Fast` (default is `true`).  
+
 | Fast | Description |
 |------|-------------|
 | true | Usage of an addional parent index. This consumes Size * sizeof(size_type) bytes of additional memory but increases the speed of insert and delete operations by factor 10. |
 | false | A parent node search algorithm is used. This is slower for insert and delete operations, but the internal parent index is omitted. Use this mode if memory is critical and insert/delete performance is not a big issue. |
+
 Search (find) speed is not affected by `Fast` and is always O(log n) fast.
 
 
