@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/mpaland/avl_array/badge.svg?branch=master)](https://coveralls.io/github/mpaland/avl_array?branch=master)
 [![Github Issues](https://img.shields.io/github/issues/mpaland/avl_array.svg)](http://github.com/mpaland/avl_array/issues)
 [![Github Releases](https://img.shields.io/github/release/mpaland/avl_array.svg)](https://github.com/mpaland/avl_array/releases)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/mpaland/avl_array/master/LICENSE.MIT)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/mpaland/avl_array/master/LICENSE)
 
 **avl_array** is a templated C++ (STL map like) container class that stores key-value data organzied as AVL-tree in a **fixed size** array.
 
@@ -98,10 +98,12 @@ avl.erase(2);       // erase key 2
 
 ### Fast mode
 This class has two compile time selectable modes as template parameter `Fast` (default is `true`).  
+
 | Fast | Description |
 |------|-------------|
 | true | Usage of an addional parent index. This consumes Size * sizeof(size_type) bytes of additional memory but increases the speed of insert and delete operations by factor 10. |
 | false | A parent node search algorithm is used. This is slower for insert and delete operations, but the internal parent index is omitted. Use this mode if memory is critical and insert/delete performance is not a big issue. |
+
 Search (find) speed is not affected by `Fast` and is always O(log n) fast.
 
 
