@@ -189,13 +189,13 @@ public:
 
 
   // capacity
-  inline const size_type size() const
+  inline size_type size() const
   { return size_; }
 
-  inline const bool empty() const
-  { return size_ == 0U; }
+  inline bool empty() const
+  { return size_ == static_cast<size_type>(0); }
 
-  inline const size_type max_size() const
+  inline size_type max_size() const
   { return Size; }
 
 
