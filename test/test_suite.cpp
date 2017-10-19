@@ -111,11 +111,11 @@ TEST_CASE("Random insert", "[insert]" ) {
 
   avl.clear();
   int ra[] = { 38, 7719, 21238, 2437, 8855, 11797, 8365, 32285, 10450, 30612, 5853, 28100, 1142, 281, 20537, 15921, 8945, 26285, 2997, 14680, 20976, 31891, 21655, 25906, 18457, 1323 };
-  for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
+  for (size_t n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
     REQUIRE(avl.insert(ra[n], ra[n]));
     REQUIRE(avl.check());
   }
-  for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
+  for (size_t n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
     REQUIRE(avl.count(ra[n]) == 1U);
   }
   REQUIRE(avl.count(1000) == 0U);
@@ -135,11 +135,11 @@ TEST_CASE("Random insert - slow mode", "[insert]" ) {
 
   avl.clear();
   int ra[] = { 38, 7719, 21238, 2437, 8855, 11797, 8365, 32285, 10450, 30612, 5853, 28100, 1142, 281, 20537, 15921, 8945, 26285, 2997, 14680, 20976, 31891, 21655, 25906, 18457, 1323 };
-  for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
+  for (size_t n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
     REQUIRE(avl.insert(ra[n], ra[n]));
     REQUIRE(avl.check());
   }
-  for (int n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
+  for (size_t n = 0; n < sizeof(ra) / sizeof(ra[0]); n++) {
     REQUIRE(avl.count(ra[n]) == 1U);
   }
   REQUIRE(avl.count(1000) == 0U);
