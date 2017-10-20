@@ -227,13 +227,8 @@ public:
       return true;
     }
 
-    for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {
-      if (key_[i] == key) {
-        // found same key, update node
-        val_[i] = val;
-        return true;
-      }
-      else if (key < key_[i]) {
+    for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {     
+      if (key < key_[i]) {
         if (child_[i].left == INVALID_IDX) {
           if (size_ >= max_size()) {
             // container is full
@@ -248,6 +243,11 @@ public:
           insert_balance(i, 1);
           return true;
         }
+      }
+      else if (key_[i] == key) {
+        // found same key, update node
+        val_[i] = val;
+        return true;
       }
       else {
         if (child_[i].right == INVALID_IDX) {
@@ -337,7 +337,7 @@ public:
    * Remove element by iterator position
    * THIS ERASE OPERATION INVALIDATES ALL ITERATORS!
    * \param position The iterator position of the element to remove
-   * \return True if the element ws removed, false if error
+   * \return True if the element was successfully removed, false if error
    */
   bool erase(iterator position)
   {
@@ -596,18 +596,7 @@ private:
     while (node != INVALID_IDX) {
       balance = (balance_[node] += balance);
 
-      if (balance == 2) {
-        if (balance_[child_[node].left] >= 0) {
-          node = rotate_right(node);
-          if (balance_[node] == -1) {
-            return;
-          }
-        }
-        else {
-          node = rotate_left_right(node);
-        }
-      }
-      else if (balance == -2) {
+      if (balance == -2) {
         if (balance_[child_[node].right] <= 0) {
           node = rotate_left(node);
           if (balance_[node] == 1) {
@@ -616,6 +605,17 @@ private:
         }
         else {
           node = rotate_right_left(node);
+        }
+      }
+      else if (balance == 2) {
+        if (balance_[child_[node].left] >= 0) {
+          node = rotate_right(node);
+          if (balance_[node] == -1) {
+            return;
+          }
+        }
+        else {
+          node = rotate_left_right(node);
         }
       }
       else if (balance != 0) {
@@ -717,13 +717,13 @@ private:
       child_[parent].right = left_right;
     }
 
-    if (balance_[left_right] == -1) {
-      balance_[node] = 0;
-      balance_[left] = 1;
-    }
-    else if (balance_[left_right] == 0) {
+    if (balance_[left_right] == 0) {
       balance_[node] = 0;
       balance_[left] = 0;
+    }
+    else if (balance_[left_right] == -1) {
+      balance_[node] = 0;
+      balance_[left] = 1;
     }
     else {
       balance_[node] = -1;
@@ -763,13 +763,13 @@ private:
       child_[parent].left = right_left;
     }
 
-    if (balance_[right_left] == 1) {
-      balance_[node]  = 0;
-      balance_[right] = -1;
-    }
-    else if (balance_[right_left] == 0) {
+    if (balance_[right_left] == 0) {
       balance_[node]  = 0;
       balance_[right] = 0;
+    }
+    else if (balance_[right_left] == 1) {
+      balance_[node]  = 0;
+      balance_[right] = -1;
     }
     else {
       balance_[node]  = 1;
