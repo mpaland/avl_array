@@ -11,9 +11,10 @@
 Motivation of this container is to insert, update, delete and find random key-value elements in *static allocated* memory with highest performance and in a minimum of time.
 
 ## Highligths and design goals
-- `std::map` like templated container class
-- Static allocated memory
+- `std::map` like templated container class with increment iterator support
 - Ultra fast, maximum performance, minimum footprint and **no dependencies** (compared to `std::map`)
+- Static allocated memory
+- NO recursive calls
 - Small memory overhead (arround 5 byte per node in slow-mode)
 - VERY clean and stable C++ code, LINT and L4 warning free, automotive ready
 - Optimized for embedded system usage
@@ -27,7 +28,7 @@ Motivation of this container is to insert, update, delete and find random key-va
 
 | Container | Operation | Worst Case Cost | add. memory overhead |
 |-----------|-----------|:---------------:|----------------------|
-| Unsorted Array   | insert / delete | O(n)               | none    |
+| Unsorted Array   | insert / delete | O(n)               | none |
 |                  | find / update   | O(n)               |      |
 | Sorted Array     | insert / delete | O(n log n) (via Heapsort) | none |
 |                  | find / update   | O(log n)           |      |
