@@ -233,10 +233,13 @@ TEST_CASE("Erase key reverse", "[erase]" ) {
 
 TEST_CASE("Erase iterator", "[erase]" ) {
   avl_array<int, int, std::uint16_t, 2048> avl;
+  REQUIRE(!avl.erase(avl.begin()));
+  REQUIRE(!avl.erase(avl.end()));
   for (int n = 1; n < 2048; n++) {
     REQUIRE(avl.insert(n, n));
     REQUIRE(*avl.find(n) == n);
   }
+  REQUIRE(!avl.erase(avl.end()));
   for (int n = 1; n < 2048; n++) {
     REQUIRE(avl.erase(avl.find(n)));
     REQUIRE(avl.find(n) == avl.end());
