@@ -1,7 +1,8 @@
 # AVL Array container class
 
 [![Build Status](https://travis-ci.org/mpaland/avl_array.svg?branch=master)](https://travis-ci.org/mpaland/avl_array)
-[![Coverage Status](https://coveralls.io/repos/github/mpaland/avl_array/badge.svg?branch=master)](https://coveralls.io/github/mpaland/avl_array?branch=master)
+[![Coveralls Status](https://coveralls.io/repos/github/mpaland/avl_array/badge.svg?branch=master)](https://coveralls.io/github/mpaland/avl_array?branch=master)
+[![Coverity Status](https://img.shields.io/coverity/scan/14061.svg)](https://scan.coverity.com/projects/mpaland-avl_array)
 [![Github Issues](https://img.shields.io/github/issues/mpaland/avl_array.svg)](http://github.com/mpaland/avl_array/issues)
 [![Github Releases](https://img.shields.io/github/release/mpaland/avl_array.svg)](https://github.com/mpaland/avl_array/releases)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/mpaland/avl_array/master/LICENSE)
