@@ -496,11 +496,12 @@ public:
         // wrong key order to the right
         return false;
       }
-      if ((i != root_) && (get_parent(i) == INVALID_IDX)) {
+      const size_type parent = get_parent(i);
+      if ((i != root_) && (parent == INVALID_IDX)) {
         // no parent
         return false;
       }
-      if ((i == root_) && (get_parent(i) != INVALID_IDX)) {
+      if ((i == root_) && (parent != INVALID_IDX)) {
         // invalid root parent
         return false;
       }
@@ -622,11 +623,13 @@ private:
         return;
       }
 
-      const size_type parent = get_parent(node);
-      if (parent != INVALID_IDX) {
-        balance = child_[parent].left == node ? -1 : 1;
+      if (node != INVALID_IDX) {
+        const size_type parent = get_parent(node);
+        if (parent != INVALID_IDX) {
+          balance = child_[parent].left == node ? -1 : 1;
+        }
+        node = parent;
       }
-      node = parent;
     }
   }
 
