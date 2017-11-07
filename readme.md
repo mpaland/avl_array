@@ -9,7 +9,8 @@
 
 **avl_array** is a templated C++ (STL map like) container class that stores key-value data organzied as AVL-tree in a **fixed size** array.
 
-Motivation of this container is to insert, update, delete and find random key-value elements in *static allocated* memory with highest performance and in a minimum of time.
+Motivation of this container is to insert, update, delete and find random key-value elements in *static allocated* memory with highest performance and in a minimum of time.  
+It might also be the base class for an associative array container.
 
 ## Highligths and design goals
 - `std::map` like templated container class with increment iterator support
