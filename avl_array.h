@@ -279,11 +279,17 @@ public:
    */
   inline bool find(const key_type& key, value_type& val) const
   {
-    for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {
-      if (key == key_[i]) {
+    for (size_type i = root_; i != INVALID_IDX;) {
+      if (key < key_[i]) {
+        i = child_[i].left;
+      }
+      else if (key == key_[i]) {
         // found key
         val = val_[i];
         return true;
+      }
+      else {
+        i = child_[i].right;
       }
     }
     // key not found
