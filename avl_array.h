@@ -304,10 +304,15 @@ public:
    */
   inline iterator find(const key_type& key)
   {
-    for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {
-      if (key == key_[i]) {
+    for (size_type i = root_; i != INVALID_IDX;) {
+      if (key < key_[i]) {
+        i = child_[i].left;
+      } else if (key == key_[i]) {
         // found key
         return iterator(this, i);
+      }
+      else {
+        i = child_[i].right;
       }
     }
     // key not found, return end() iterator
