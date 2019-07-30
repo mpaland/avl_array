@@ -378,17 +378,23 @@ public:
         }
       }
       else {
-        const size_type parent = get_parent(node);
-        child_[parent].left == node ? child_[parent].left = right : child_[parent].right = right;
+		const size_type parent = get_parent(node);
+		if(parent != INVALID_IDX){
+			child_[parent].left == node ? child_[parent].left = right : child_[parent].right = right;
+		}
+		else root_=right;
 
-        set_parent(right, parent);
+		set_parent(right, parent);
 
-        delete_balance(right, 0);
+		delete_balance(right, 0);
       }
     }
     else if (right == INVALID_IDX) {
       const size_type parent = get_parent(node);
-      child_[parent].left == node ? child_[parent].left = left : child_[parent].right = left;
+      if(parent != INVALID_IDX){
+         child_[parent].left == node ? child_[parent].left = left : child_[parent].right = left;
+      }
+      else root_=left;
 
       set_parent(left, parent);
 
