@@ -9,13 +9,15 @@
 
 **avl_array** is a templated C++ (STL map like) container class that stores key-value data organzied as AVL-tree in a **fixed size** array.
 
-Motivation of this container is to insert, update, delete and find random key-value elements in *static allocated* memory with highest performance and in a minimum of time.  
+For an embedded project I needed a high-performance key-value store in static memory with the fastest key retrieval time I could get.  
+Normally a `std::map` container with a static custom allocator is taken, but `std::map` pulls a lot of unwanted stuff and dependencies into the project while its performance is rather average.  
+That being said, motivation of this container is to insert, update, delete and find random key-value elements in *static allocated* memory with highest performance and in a minimum of time.  
 It might also be the base class for an associative array container.
 
 ## Highligths and design goals
 - `std::map` like templated container class with increment iterator support
 - Ultra fast, maximum performance, minimum footprint and **no dependencies** (compared to `std::map`)
-- Static allocated memory
+- Static allocated memory (as template parameter)
 - NO recursive calls
 - Small memory overhead (arround 5 byte per node in slow-mode)
 - VERY clean and stable C++ code, LINT and L4 warning free, automotive ready
@@ -120,7 +122,7 @@ For testing just compile, build and run the test suite located in `test/test_sui
 
 
 ## Projects using avl_array
-- The [vic library](https://github.com/mpaland/vic) uses avl_array as sprite/background buffer for fast sprite rendering.
+- The [vic library](https://github.com/mpaland/vic) uses avl_array as sprite/background pixel buffer for fast sprite rendering.
 
 
 ## Contributing
