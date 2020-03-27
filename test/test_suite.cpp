@@ -208,10 +208,10 @@ TEST_CASE("Erase key forward", "[erase]" ) {
     if (avl.begin() != avl.end()) {
       REQUIRE(n + 1 == *avl.begin());
     }
-//    int x = n + 1;
-//    for (auto it = avl.begin(); it != avl.end(); ++it) {
-//      REQUIRE(*it == x++);
-//    }
+    int x = n + 1;
+    for (auto it = avl.begin(); it != avl.end(); ++it) {
+      REQUIRE(*it == x++);
+    }
   }
 }
 
