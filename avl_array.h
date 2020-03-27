@@ -539,13 +539,11 @@ private:
   inline size_type get_parent(size_type node) const
   {
     if (Fast) {
-      assert(node < Size);
       return parent_[node];
     }
     else {
       const Key key_node = key_[node];
       for (size_type i = root_; i != INVALID_IDX; i = (key_node < key_[i]) ? child_[i].left : child_[i].right) {
-        assert(i < Size);
         if ((child_[i].left == node) || (child_[i].right == node)) {
           // found parent
           return i;
