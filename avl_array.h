@@ -10,10 +10,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -60,7 +60,7 @@ class avl_array
     size_type right;
   } child_type;
 
-  // node storage, due to possible structure packing effects, single arrays are used instead of a 'node' structure 
+  // node storage, due to possible structure packing effects, single arrays are used instead of a 'node' structure
   Key         key_[Size];                 // node key
   T           val_[Size];                 // node value
   std::int8_t balance_[Size];             // subtree balance
@@ -227,7 +227,7 @@ public:
       return true;
     }
 
-    for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {     
+    for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {
       if (key < key_[i]) {
         if (child_[i].left == INVALID_IDX) {
           if (size_ >= max_size()) {
