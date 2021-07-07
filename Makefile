@@ -149,7 +149,8 @@ CPPFLAGS      = $(GCCFLAGS)                       \
                 -fno-threadsafe-statics           \
                 -fno-enforce-eh-specs             \
                 -ftemplate-depth-64               \
-                -fexceptions
+                -fexceptions                      \
+                -Wno-deprecated-copy
 
 AFLAGS        = $(GCCFLAGS)                       \
                 -x assembler
