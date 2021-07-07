@@ -84,9 +84,9 @@ VPATH := $(sort $(dir $(FILES_TMP)))
 # Development tools
 # ------------------------------------------------------------------------------
 AR        = $(PATH_TOOLS_CC)ar
-AS        = $(PATH_TOOLS_CC)g++
-CC        = $(PATH_TOOLS_CC)g++
-CL        = $(PATH_TOOLS_CC)g++
+CC        ?= $(PATH_TOOLS_CC)g++
+CL        ?= $(CC)
+AS        ?= $(CC)
 NM        = $(PATH_TOOLS_CC)nm
 GCOV      = $(PATH_TOOLS_CC)gcov
 OBJDUMP   = $(PATH_TOOLS_CC)objdump
