@@ -34,10 +34,10 @@ It might also be the base class for an associative array container.
 
 
 ### Benchmark with std::map
-![](./img/1.png)
-![](./img/2.png)
-![](./img/3.png)
-![](./img/4.png)
+![](./image/1.png)
+![](./image/2.png)
+![](./image/3.png)
+![](./image/4.png)
 ### Comparison of different access containers
 
 | Container | Operation | Worst Case Cost | add. memory overhead |
