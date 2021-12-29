@@ -34,6 +34,10 @@ It might also be the base class for an associative array container.
 
 
 ### Benchmark with std::map
+```
+#gcc 11
+g++ -O1 benchmark.cpp
+```
 ![](./image/1.png)
 ![](./image/2.png)
 ![](./image/3.png)
