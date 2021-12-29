@@ -32,6 +32,12 @@ It might also be the base class for an associative array container.
 - Auto smallest size_type
 - Support const_iterator reverse_iterator const_reverse_iterator
 
+
+### Benchmark with std::map
+![](./img/1.png)
+![](./img/2.png)
+![](./img/3.png)
+![](./img/4.png)
 ### Comparison of different access containers
 
 | Container | Operation | Worst Case Cost | add. memory overhead |
