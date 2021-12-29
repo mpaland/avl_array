@@ -26,7 +26,11 @@ It might also be the base class for an associative array container.
 - Extensive test suite
 - Doxygen commented code
 - MIT license
-
+- nicehero version:
+- Add emplace method
+- Optimized for nonPOD Type
+- Auto smallest size_type
+- Support const_iterator reverse_iterator const_reverse_iterator
 
 ### Comparison of different access containers
 
@@ -73,31 +77,39 @@ So there's a storage overhead of (2 * sizeof(size_type) + balance_byte) * Size, 
 Using the AVL array container is pretty simple. Most functions are very similar to the standard `std::map` container.
 
 ```c++
-#include <avl_array.h>
+#include "static_avl.h"
+using namespace nicehero;
 
-// create a 2048 node tree with <int> as key and value types and <std::uint16_t> as size type in 'Fast' mode
-avl_array<int, int, std::uint16_t, 2048, true> avl;
+// create a 2048 node tree with <int> as key and value types in 'Fast' mode
+static_avl<int, int, 2048> avl;
 
 // insert
-avl.insert(1, 1);   // set value of key 1 to 1
-avl.insert(2, 2);   // set value of key 2 to 2
-avl.insert(3, 3);   // set value of key 3 to 3
+avl.emplace(1, 1);   // set value of key 1 to 1
+avl.emplace(2, 2);   // set value of key 2 to 2
+avl.emplace(3, 3);   // set value of key 3 to 3
 
 // update
-avl.insert(2, 4);   // update value of key 2 to 4
+avl.emplace(2, 4);   // update value of key 2 to 4
 
 // find
-int val = *avl.find(2);       // as iterator (returns 4)
+int val = avl.find(2).key();       // as iterator (returns 4)
 bool res = avl.find(1, val);  // as data type (returns 1)
 
 // using an iterator to access the values of the according keys in ascending key order
 // output is: 1 4 3
-for (auto it = avl.begin(); it != avl.end(); ++it) {
-  std::cout << *it << " ";
+for (auto it:avl) {
+  std::cout << it.val() << " ";
 }
 
 // erase
 avl.erase(2);       // erase key 2
+
+struct S{
+	int x;
+	const char* c;
+};
+static_avl<int, S, 2048> avl2;
+avl2.emplace(1,1,"abc"); //emplace for struct
 ```
 
 
