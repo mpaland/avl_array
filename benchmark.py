@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from io import BytesIO
+
 opts = ["insert","find","erase&insert","erase"]
 #opts = ["erase"]
 fp = open("result.txt","r")
@@ -65,5 +67,8 @@ for opt in opts:
 	axs.append([ax,t])
 	plt.legend()
 plt.connect('motion_notify_event', on_move)
-#plt.savefig("plt.svg")
+buffer = BytesIO()
+plt.savefig(buffer,format="svg")  
+plot_data = buffer.getvalue()
+#print(plot_data)
 plt.show()
