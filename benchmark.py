@@ -7,6 +7,8 @@ opts = ["insert","find","erase&insert","erase"]
 fp = open("result.txt","r")
 ll = fp.readlines()
 fp.close()
+plt.subplots(3,3, figsize=(14, 9))
+i = 1
 for opt in opts:
 	y = []
 	y1 = []
@@ -35,6 +37,8 @@ for opt in opts:
 		y1 = y1[2:]
 		x1 = x1[:-2]
 		x2 = x2[2:]
+	plt.subplot(2,2,i)
+	i += 1
 	plt.xticks(x1,x2)
 	y2 = [np.max(y),np.mean(y),np.median(y),np.min(y)]
 	plt.yticks(y2,list(map(lambda x: str(int(x)) + "w", y2)))
@@ -44,4 +48,4 @@ for opt in opts:
 	plt.xlabel("Size")
 	plt.ylabel("QPS(w)")
 	plt.legend()
-	plt.show()
+plt.show()
