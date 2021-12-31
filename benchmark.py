@@ -2,11 +2,29 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from io import BytesIO
+
 opts = ["insert","find","erase&insert","erase"]
 #opts = ["erase"]
 fp = open("result.txt","r")
 ll = fp.readlines()
 fp.close()
+fig,_ = plt.subplots(3,3, figsize=(14, 9))
+axs = []
+def on_move(event):
+	# get the x and y pixel coords
+	x, y = event.x, event.y
+	if event.inaxes:
+		ax = event.inaxes  # the axes instance
+		for a in axs:
+			if a[0] == ax:
+				a[1].set_position((event.xdata, event.ydata))
+				a[1].set_text(str(int(event.ydata)))
+			else:
+				a[1].set_text("")
+		#print('data coords %f %f %f %f' % (x, y,event.xdata, event.ydata))
+		fig.canvas.draw_idle()
+i = 1
 for opt in opts:
 	y = []
 	y1 = []
@@ -35,6 +53,8 @@ for opt in opts:
 		y1 = y1[2:]
 		x1 = x1[:-2]
 		x2 = x2[2:]
+	ax = plt.subplot(2,2,i)
+	i += 1
 	plt.xticks(x1,x2)
 	y2 = [np.max(y),np.mean(y),np.median(y),np.min(y)]
 	plt.yticks(y2,list(map(lambda x: str(int(x)) + "w", y2)))
@@ -43,5 +63,12 @@ for opt in opts:
 	plt.title(opt)
 	plt.xlabel("Size")
 	plt.ylabel("QPS(w)")
+	t = plt.text(0,0,"",fontsize = 10)
+	axs.append([ax,t])
 	plt.legend()
-	plt.show()
+plt.connect('motion_notify_event', on_move)
+buffer = BytesIO()
+plt.savefig(buffer,format="svg")  
+plot_data = buffer.getvalue()
+#print(plot_data)
+plt.show()
