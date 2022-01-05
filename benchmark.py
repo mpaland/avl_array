@@ -19,7 +19,7 @@ def on_move(event):
 		for a in axs:
 			if a[0] == ax:
 				a[1].set_position((event.xdata, event.ydata))
-				a[1].set_text(str(int(event.ydata)))
+				a[1].set_text(str(int(event.ydata)) + "w")
 			else:
 				a[1].set_text("")
 		#print('data coords %f %f %f %f' % (x, y,event.xdata, event.ydata))
