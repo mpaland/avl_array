@@ -31,6 +31,7 @@ It might also be the base class for an associative array container.
 - Optimized for nonPOD Type
 - Auto smallest size_type
 - Support const_iterator reverse_iterator const_reverse_iterator
+- get(key,default_) method like python (use template navl)
 
 
 ### Benchmark with std::map
@@ -91,7 +92,7 @@ Using the AVL array container is pretty simple. Most functions are very similar 
 using namespace nicehero;
 
 // create a 2048 node tree with <int> as key and value types in 'Fast' mode
-static_avl<int, int, 2048> avl;
+navl<int, int, 2048> avl;
 
 // insert
 avl.emplace(1, 1);   // set value of key 1 to 1
@@ -118,7 +119,7 @@ struct S{
 	int x;
 	const char* c;
 };
-static_avl<int, S, 2048> avl2;
+navl<int, S, 2048> avl2;
 avl2.emplace(1,1,"abc"); //emplace for struct
 ```
 

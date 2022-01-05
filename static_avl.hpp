@@ -45,6 +45,8 @@
 #include <cstdint>
 #include "static_vector.hpp"
 #include <utility>
+#include "Type.h"
+#include "smart_ref.hpp"
 
 namespace nicehero {
 
@@ -770,6 +772,23 @@ namespace nicehero {
 			// key not found, return end() iterator
 			return end();
 		}
+		inline const_iterator find(const key_type& key) const
+		{
+			for (size_type i = root_; i != INVALID_IDX;) {
+				if (key < key_[i]) {
+					i = child_[i].left;
+				}
+				else if (key == key_[i]) {
+					// found key
+					return const_iterator(this, i);
+				}
+				else {
+					i = child_[i].right;
+				}
+			}
+			// key not found, return end() iterator
+			return end();
+		}
 
 
 		/**
@@ -1245,5 +1264,305 @@ namespace nicehero {
 			return right_left;
 		}
 	};
+
+	template <typename K, typename V, size_t  Size>
+	using baseavl = static_avl<K, V, Size>;
+
+	template <class K, class V, size_t  Size>
+	class navl : public static_avl<K, V, Size>
+	{
+	public:
+		using BaseMap = static_avl<K, V, Size>;
+		smart_ref<V> get(const K& k, const V& rDefault) {
+			auto it = BaseMap::find(k);
+			if (it == BaseMap::end()) {
+				return rDefault;
+			}
+			return smart_ref<V>(&it.val());
+		}
+		const_smart_ref<V> get(const K& k, const V& rDefault) const {
+			auto it = BaseMap::find(k);
+			if (it == BaseMap::end()) {
+				return rDefault;
+			}
+			return const_smart_ref<V>(&it.val());
+		}
+		const V* get(const K& k) const {
+			auto it = BaseMap::find(k);
+			if (it == BaseMap::end()) {
+				return nullptr;
+			}
+			return &it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, std::string, Size>
+		: public static_avl<K, std::string,Size>
+	{
+	public:
+		const char* get(const K& k, const char* rDefault = "") const {
+			auto it = static_avl<K, std::string, Size>::find(k);
+			if (it == static_avl<K, std::string, Size>::end()) {
+				return rDefault;
+			}
+			return it.val().c_str();
+		}
+	};
+	template <class K, size_t  Size>
+	class navl<K, const char*, Size>
+		: public static_avl<K, const char*, Size>
+	{
+	public:
+		const char* get(const K& k, const char* rDefault = "") const {
+			auto it = static_avl<K, const char*, Size>::find(k);
+			if (it == static_avl<K, const char*, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, bool, Size>
+		: public static_avl<K, bool, Size>
+	{
+		using V = bool;
+	public:
+		V get(const K& k, V rDefault = false) const {
+			auto it = static_avl<K, bool, Size>::find(k);
+			if (it == static_avl<K, bool, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, ui8, Size>
+		: public static_avl<K, ui8, Size>
+	{
+		using V = ui8;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, ui8, Size>::find(k);
+			if (it == static_avl<K, ui8, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, char, Size>
+		: public static_avl<K, char, Size>
+	{
+		using V = char;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, char, Size>::find(k);
+			if (it == static_avl<K, char, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, i16, Size>
+		: public static_avl<K, i16, Size>
+	{
+		using V = i16;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, i16, Size>::find(k);
+			if (it == static_avl<K, i16, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, i32, Size>
+		: public static_avl<K, i32, Size>
+	{
+		using V = i32;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, i32, Size>::find(k);
+			if (it == static_avl<K, i32, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, i64, Size>
+		: public static_avl<K, i64, Size>
+	{
+		using V = i64;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, i64, Size>::find(k);
+			if (it == static_avl<K, i64, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, ui16, Size>
+		: public static_avl<K, ui16, Size>
+	{
+		using V = ui16;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, ui16, Size>::find(k);
+			if (it == static_avl<K, ui16, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, ui32, Size>
+		: public static_avl<K, ui32, Size>
+	{
+		using V = ui32;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, ui32, Size>::find(k);
+			if (it == static_avl<K, ui32, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	template <class K, size_t  Size>
+	class navl<K, ui64, Size>
+		: public static_avl<K, ui64, Size>
+	{
+		using V = ui64;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = static_avl<K, ui64, Size>::find(k);
+			if (it == static_avl<K, ui64, Size>::end()) {
+				return rDefault;
+			}
+			return it.val();
+		}
+	};
+
+	/*
+	template <class K, template<typename, typename> class BaseMap>
+	class nmap<K, char, BaseMap>
+		: public BaseMap<K, char>
+	{
+		using V = char;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = BaseMap<K, V>::find(k);
+			if (it == BaseMap<K, V>::end()) {
+				return rDefault;
+			}
+			return it->second;
+		}
+	};
+
+	template <class K, template<typename, typename> class BaseMap>
+	class nmap<K, ui16, BaseMap>
+		: public BaseMap<K, ui16>
+	{
+		using V = ui16;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = BaseMap<K, V>::find(k);
+			if (it == BaseMap<K, V>::end()) {
+				return rDefault;
+			}
+			return it->second;
+		}
+	};
+
+	template <class K, template<typename, typename> class BaseMap>
+	class nmap<K, ui32, BaseMap>
+		: public BaseMap<K, ui32>
+	{
+		using V = ui32;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = BaseMap<K, V>::find(k);
+			if (it == BaseMap<K, V>::end()) {
+				return rDefault;
+			}
+			return it->second;
+		}
+	};
+
+	template <class K, template<typename, typename> class BaseMap>
+	class nmap<K, ui64, BaseMap>
+		: public BaseMap<K, ui64>
+	{
+		using V = ui64;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = BaseMap<K, V>::find(k);
+			if (it == BaseMap<K, V>::end()) {
+				return rDefault;
+			}
+			return it->second;
+		}
+	};
+
+	template <class K, template<typename, typename> class BaseMap>
+	class nmap<K, i16, BaseMap>
+		: public BaseMap<K, i16>
+	{
+		using V = i16;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = BaseMap<K, V>::find(k);
+			if (it == BaseMap<K, V>::end()) {
+				return rDefault;
+			}
+			return it->second;
+		}
+	};
+
+	template <class K, template<typename, typename> class BaseMap>
+	class nmap<K, i32, BaseMap>
+		: public BaseMap<K, i32>
+	{
+		using V = i32;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = BaseMap<K, V>::find(k);
+			if (it == BaseMap<K, V>::end()) {
+				return rDefault;
+			}
+			return it->second;
+		}
+	};
+
+	template <class K, template<typename, typename> class BaseMap>
+	class nmap<K, i64, BaseMap>
+		: public BaseMap<K, i64>
+	{
+		using V = i64;
+	public:
+		V get(const K& k, V rDefault = 0) const {
+			auto it = BaseMap<K, V>::find(k);
+			if (it == BaseMap<K, V>::end()) {
+				return rDefault;
+			}
+			return it->second;
+		}
+	};
+	*/
 }
 #endif  // _NICEHERO_STATIC_AVL_H_

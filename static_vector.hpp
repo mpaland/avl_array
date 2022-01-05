@@ -500,12 +500,12 @@ namespace nicehero
 // 					FCV_REQUIRES_(Constructible<T, Args...>and
 // 						Assignable<value_type&, T>)>
 				template <typename... Args>
-				constexpr void emplace_back(Args&&... args) noexcept
+				constexpr void emplace_back(Args&&... args)
                 {
                     FCV_EXPECT(!full()
                                 && "tried to emplace_back on full storage!");
 					index(data_, size()) = T{ forward<Args>(args)... };
-                    unsafe_set_size(size() + 1);
+					unsafe_set_size(size() + 1);
                 }
 
                 /// Remove the last element from the container.

@@ -6,6 +6,7 @@
 #include <map>
 #include <iostream>
 #include <memory>
+#include <string>
 
 std::string size2str(size_t s)
 {
@@ -188,8 +189,19 @@ void benchmark()
 	cout << endl;
 }
 
+struct S1 {
+	i16 a;
+	const char* b;
+};
+struct S2 {
+	i16 a;
+	std::string b;
+};
+
 int main()
 {
+	using namespace nicehero;
+	using namespace std;
 	benchmark<128,10000,20>();
 	benchmark<128,10000,10>();
 	benchmark<128,10000,1>();
@@ -203,4 +215,32 @@ int main()
 	benchmark<5000000,1,0>();
 	benchmark<50000000,1,10>();
 	benchmark<50000000,1,0>();
+	{
+		navl<int, string, 128> a1;
+		a1.emplace(1, "abc");
+		auto t1 = a1.get(1, "def");
+		auto t2 = a1.get(2, "def");
+		int t3 = 0;
+	}
+	{
+		navl<int, bool, 128> a2;
+		a2.emplace(1, true);
+		auto t1 = a2.get(1, false);
+		auto t2 = a2.get(2, false);
+		int t3 = 0;
+	}
+	{
+		navl<int, ui64, 128> a3;
+		a3.emplace(1, ui64(10));
+		auto t1 = a3.get(1, 11);
+		auto t2 = a3.get(2, 11);
+		int t3 = 0;
+	}
+	{
+		navl<int, S2, 128> a3;
+		a3.emplace(1, i16(10), "111");
+		auto t1 = a3.get(1, { i16(99), "222" });
+		auto t2 = a3.get(2, { i16(99), "222" });
+		int t3 = 0;
+	}
 }
