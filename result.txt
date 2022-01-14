@@ -1,0 +1,155 @@
+mapSize:128 testCount:10000 missPercent:20
+sizeof static_avl:1.511719kb
+avl insert 128x10000 cost0.090005s QPS:14221432
+std::map insert 128x10000 cost0.262014s QPS:4885235
+totalNum avl:128 map:128
+static_avl find 128x10000 missNum:24 cost:0.040002s QPS:31998400
+std::map find 128x10000 missNum:24 cost:0.049002s QPS:26121382
+static_avl erase&insert 128x10000 cost:0.228013s QPS:5613715
+std::map erase&insert 128x10000 cost:0.257014s QPS:4980273
+static_avl erase 128cost:0s QPS:0
+std::map erase 128cost:0s QPS:0
+
+mapSize:128 testCount:10000 missPercent:10
+sizeof static_avl:1.511719kb
+avl insert 128x10000 cost0.070004s QPS:18284669
+std::map insert 128x10000 cost0.243013s QPS:5267207
+totalNum avl:128 map:128
+static_avl find 128x10000 missNum:15 cost:0.043002s QPS:29766057
+std::map find 128x10000 missNum:15 cost:0.040002s QPS:26998400
+static_avl erase&insert 128x10000 cost:0.199011s QPS:6431805
+std::map erase&insert 128x10000 cost:0.271015s QPS:4722985
+static_avl erase 128cost:0s QPS:0
+std::map erase 128cost:0s QPS:0
+
+mapSize:128 testCount:10000 missPercent:1
+sizeof static_avl:1.511719kb
+avl insert 128x10000 cost0.062003s QPS:20644162
+std::map insert 128x10000 cost0.268015s QPS:4775852
+totalNum avl:128 map:128
+static_avl find 128x10000 missNum:3 cost:0.042002s QPS:30474739
+std::map find 128x10000 missNum:3 cost:0.067003s QPS:19103622
+static_avl erase&insert 128x10000 cost:0.254014s QPS:5039092
+std::map erase&insert 128x10000 cost:0.328018s QPS:3902224
+static_avl erase 128cost:0s QPS:0
+std::map erase 128cost:0s QPS:0
+
+mapSize:1024 testCount:1000 missPercent:10
+sizeof static_avl:15.011719kb
+avl insert 1024x1000 cost0.087004s QPS:11769573
+std::map insert 1024x1000 cost0.196011s QPS:5224196
+totalNum avl:1024 map:1024
+static_avl find 1024x1000 missNum:105 cost:0.075004s QPS:13652605
+std::map find 1024x1000 missNum:105 cost:0.114006s QPS:8981983
+static_avl erase&insert 1024x1000 cost:0.234013s QPS:4375825
+std::map erase&insert 1024x1000 cost:0.271015s QPS:3778388
+static_avl erase 1024cost:0s QPS:0
+std::map erase 1024cost:0s QPS:0
+
+mapSize:1024 testCount:1000 missPercent:0
+sizeof static_avl:15.011719kb
+avl insert 1024x1000 cost0.098005s QPS:10448446
+std::map insert 1024x1000 cost0.203011s QPS:5044061
+totalNum avl:1024 map:1024
+static_avl find 1024x1000 missNum:0 cost:0.068003s QPS:15058159
+std::map find 1024x1000 missNum:0 cost:0.074004s QPS:13837089
+static_avl erase&insert 1024x1000 cost:0.257014s QPS:3984218
+std::map erase&insert 1024x1000 cost:0.286016s QPS:3580219
+static_avl erase 1024cost:0s QPS:0
+std::map erase 1024cost:0s QPS:0
+
+mapSize:65535 testCount:50 missPercent:10
+sizeof static_avl:1.312496Mb
+avl insert 65535x50 cost0.770044s QPS:4255276
+std::map insert 65535x50 cost1.49909s QPS:2185833
+totalNum avl:65535 map:65535
+static_avl find 65535x50 missNum:6572 cost:0.471026s QPS:6956622
+std::map find 65535x50 missNum:6572 cost:0.837047s QPS:3914654
+static_avl erase&insert 65535x50 cost:1.57109s QPS:2085655
+std::map erase&insert 65535x50 cost:2.08912s QPS:1568484
+static_avl erase 65535cost:0.016s QPS:204796875
+std::map erase 65535cost:0.022001s QPS:148936411
+
+mapSize:65535 testCount:50 missPercent:0
+sizeof static_avl:1.312496Mb
+avl insert 65535x50 cost0.778044s QPS:4211522
+std::map insert 65535x50 cost1.49308s QPS:2194617
+totalNum avl:65535 map:65535
+static_avl find 65535x50 missNum:0 cost:0.498028s QPS:6579449
+std::map find 65535x50 missNum:0 cost:0.88605s QPS:3698154
+static_avl erase&insert 65535x50 cost:1.55609s QPS:2105760
+std::map erase&insert 65535x50 cost:2.09012s QPS:1567733
+static_avl erase 65535cost:0.016s QPS:204796875
+std::map erase 65535cost:0.024001s QPS:136525561
+
+mapSize:500000 testCount:5 missPercent:10
+sizeof static_avl:10.013596Mb
+avl insert 500000x5 cost0.830047s QPS:3011877
+std::map insert 500000x5 cost1.54309s QPS:1620127
+totalNum avl:500000 map:500000
+static_avl find 500000x5 missNum:50157 cost:0.400022s QPS:6249656
+std::map find 500000x5 missNum:50157 cost:0.697039s QPS:3586599
+static_avl erase&insert 500000x5 cost:1.8321s QPS:1364551
+std::map erase&insert 500000x5 cost:2.06412s QPS:1211171
+static_avl erase 500000cost:0.163009s QPS:15336576
+std::map erase 500000cost:0.219012s QPS:11414899
+
+mapSize:500000 testCount:5 missPercent:0
+sizeof static_avl:10.013596Mb
+avl insert 500000x5 cost0.849048s QPS:2944474
+std::map insert 500000x5 cost1.54409s QPS:1619078
+totalNum avl:500000 map:500000
+static_avl find 500000x5 missNum:0 cost:0.442025s QPS:5655788
+std::map find 500000x5 missNum:0 cost:0.749042s QPS:3337596
+static_avl erase&insert 500000x5 cost:1.8121s QPS:1379612
+std::map erase&insert 500000x5 cost:2.06212s QPS:1212346
+static_avl erase 500000cost:0.164009s QPS:15243065
+std::map erase 500000cost:0.219012s QPS:11414899
+
+mapSize:5000000 testCount:1 missPercent:10
+sizeof static_avl:100.135818Mb
+avl insert 5000000x1 cost1.8341s QPS:2726126
+std::map insert 5000000x1 cost3.25219s QPS:1537427
+totalNum avl:5000000 map:5000000
+static_avl find 5000000x1 missNum:500025 cost:0.944054s QPS:5296307
+std::map find 5000000x1 missNum:500025 cost:1.53409s QPS:3259267
+static_avl erase&insert 5000000x1 cost:4.28625s QPS:1166522
+std::map erase&insert 5000000x1 cost:4.41125s QPS:1133465
+static_avl erase 5000000cost:1.7491s QPS:2858613
+std::map erase 5000000cost:2.23913s QPS:2233012
+
+mapSize:5000000 testCount:1 missPercent:0
+sizeof static_avl:100.135818Mb
+avl insert 5000000x1 cost1.7721s QPS:2821509
+std::map insert 5000000x1 cost3.11318s QPS:1606075
+totalNum avl:5000000 map:5000000
+static_avl find 5000000x1 missNum:0 cost:0.964055s QPS:5186426
+std::map find 5000000x1 missNum:0 cost:1.62109s QPS:3084340
+static_avl erase&insert 5000000x1 cost:4.26924s QPS:1171167
+std::map erase&insert 5000000x1 cost:4.40025s QPS:1136298
+static_avl erase 5000000cost:1.7661s QPS:2831095
+std::map erase 5000000cost:2.23513s QPS:2237009
+
+mapSize:50000000 testCount:1 missPercent:10
+sizeof static_avl:1001.358047Mb
+avl insert 50000000x1 cost18.7161s QPS:2671501
+std::map insert 50000000x1 cost34.344s QPS:1455859
+totalNum avl:50000000 map:50000000
+static_avl find 50000000x1 missNum:5003108 cost:10.7656s QPS:4644416
+std::map find 50000000x1 missNum:5003108 cost:16.5169s QPS:3027194
+static_avl erase&insert 50000000x1 cost:48.1168s QPS:1039139
+std::map erase&insert 50000000x1 cost:45.4906s QPS:1099128
+static_avl erase 50000000cost:18.373s QPS:2721377
+std::map erase 50000000cost:23.3273s QPS:2143408
+
+mapSize:50000000 testCount:1 missPercent:0
+sizeof static_avl:1001.358047Mb
+avl insert 50000000x1 cost19.4111s QPS:2575844
+std::map insert 50000000x1 cost32.9049s QPS:1519531
+totalNum avl:50000000 map:50000000
+static_avl find 50000000x1 missNum:0 cost:11.3736s QPS:4396126
+std::map find 50000000x1 missNum:0 cost:17.971s QPS:2782256
+static_avl erase&insert 50000000x1 cost:47.9197s QPS:1043411
+std::map erase&insert 50000000x1 cost:44.3175s QPS:1128221
+static_avl erase 50000000cost:18.3711s QPS:2721673
+std::map erase 50000000cost:22.9973s QPS:2174166

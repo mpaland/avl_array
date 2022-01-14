@@ -1,0 +1,6 @@
+#need gcc 11
+#need python3
+g++ -O1 benchmark.cpp -o a.exe
+a.exe > result.txt
+pip3 install seaborn
+python3 benchmark.py
