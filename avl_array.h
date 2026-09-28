@@ -54,6 +54,8 @@
 template<typename Key, typename T, typename size_type, const size_type Size, const bool Fast = true>
 class avl_array
 {
+  static_assert(Size > 0, "avl_array capacity must be positive");
+
   // child index pointer class
   typedef struct tag_child_type {
     size_type left;
@@ -95,7 +97,7 @@ class avl_array
     }
 
     inline bool operator==(const tag_avl_array_iterator& rhs) const
-    { return idx_ == rhs.idx_; }
+    { return instance_ == rhs.instance_ && idx_ == rhs.idx_; }
 
     inline bool operator!=(const tag_avl_array_iterator& rhs) const
     { return !(*this == rhs); }
@@ -352,7 +354,8 @@ public:
    */
   bool erase(iterator position)
   {
-    if (empty() || (position == end())) {
+    if ((position.instance_ != this) ||
+        (static_cast<std::uintmax_t>(position.idx_) >= static_cast<std::uintmax_t>(size_))) {
       return false;
     }
 
