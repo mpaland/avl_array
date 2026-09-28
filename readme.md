@@ -113,11 +113,17 @@ Search (find) speed is not affected by `Fast` and is always O(log n) fast.
 
 
 ## Caveats
+Keys returned by `iterator.key()` are read-only (`const Key&`), as with C++11 `std::map`. Values remain writable through `val()` and `operator*()`. To change a key, erase and reinsert the entry.
+
+The template capacity must be positive. `erase(iterator)` rejects default, foreign, and out-of-range iterators; it cannot detect every stale iterator.
+
 **The `erase()` function invalidates any iterators!**  
 After erasing a node, an iterator must be initialized again (e.g. via the `begin()` or `find()` function).
 
 
 ## Test and run
+See [test coverage and audit results](test/README.md) for regression checks, sanitizer commands, and the standalone benchmark.
+
 For testing just compile, build and run the test suite located in `test/test_suite.cpp`. This uses the [catch](https://github.com/philsquared/Catch) framework for unit-tests, which is auto-adding `main()`.
 
 
@@ -134,6 +140,8 @@ For testing just compile, build and run the test suite located in `test/test_sui
 6. Create a new pull request
 7. Profit! :white_check_mark:
 8. Please report any issues.
+  
+If you like this project, please consider giving it a star :star:
 
 
 ## License
