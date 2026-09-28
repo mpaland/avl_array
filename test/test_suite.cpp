@@ -31,7 +31,15 @@
 #include "catch.hpp"
 
 #include <cstdlib>
+#include <algorithm>
+#include <iterator>
+#include <map>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 #include "../avl_array.h"
+#include "regression.h"
 
 
 
@@ -158,8 +166,9 @@ TEST_CASE("Random erase", "[erase]" ) {
   }
 
   for (int n = 0; n < 10000; n++) {
-    if (arr[n] != *avl.find(arr[n]))
-    REQUIRE(arr[n] == *avl.find(arr[n]));
+    const auto it = avl.find(arr[n]);
+    REQUIRE(it != avl.end());
+    REQUIRE(arr[n] == *it);
   }
 
   for (int n = 0; n < 10000; n++) {
@@ -182,8 +191,9 @@ TEST_CASE("Random erase - slow mode", "[erase]" ) {
   }
 
   for (int n = 0; n < 10000; n++) {
-    if (arr[n] != *avl.find(arr[n]))
-    REQUIRE(arr[n] == *avl.find(arr[n]));
+    const auto it = avl.find(arr[n]);
+    REQUIRE(it != avl.end());
+    REQUIRE(arr[n] == *it);
   }
 
   for (int n = 0; n < 10000; n++) {
@@ -257,7 +267,7 @@ TEST_CASE("Erase iterator 2", "[erase]" ) {
   }
   avl_array<int, int, std::uint16_t, 2048>::iterator it = avl.begin();
   for (int n = 0; n < 2000; n++) {
-    int k = ++it.key();
+    int k = it.key() + 1;
     REQUIRE(avl.erase(it));
     it = avl.find(k);
     REQUIRE(avl.check());
