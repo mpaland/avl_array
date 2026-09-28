@@ -109,7 +109,7 @@ class avl_array
     { return instance_->val_[idx_]; }
 
     // access key
-    inline Key& key() const
+    inline const Key& key() const
     { return instance_->key_[idx_]; }
 
     // preincrement
