@@ -171,7 +171,7 @@ public:
   // ctor
   avl_array()
     : size_(0U)
-    , root_(Size)
+    , root_(INVALID_IDX)
   { }
 
 
@@ -229,7 +229,7 @@ public:
       return true;
     }
 
-    for (size_type i = root_; i != INVALID_IDX; i = (key < key_[i]) ? child_[i].left : child_[i].right) {
+    for (size_type i = root_; i != INVALID_IDX;) {
       if (key < key_[i]) {
         if (child_[i].left == INVALID_IDX) {
           if (size_ >= max_size()) {
@@ -245,6 +245,7 @@ public:
           insert_balance(i, 1);
           return true;
         }
+        i = child_[i].left;
       }
       else if (key_[i] == key) {
         // found same key, update node
@@ -266,6 +267,7 @@ public:
           insert_balance(i, -1);
           return true;
         }
+        i = child_[i].right;
       }
     }
     // node doesn't fit (should not happen) - discard it anyway
@@ -545,7 +547,7 @@ private:
       return parent_[node];
     }
     else {
-      const Key key_node = key_[node];
+      const Key& key_node = key_[node];
       for (size_type i = root_; i != INVALID_IDX; i = (key_node < key_[i]) ? child_[i].left : child_[i].right) {
         if ((child_[i].left == node) || (child_[i].right == node)) {
           // found parent
