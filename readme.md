@@ -1,11 +1,16 @@
 # AVL Array container class
 
-[![Build Status](https://travis-ci.org/mpaland/avl_array.svg?branch=master)](https://travis-ci.org/mpaland/avl_array)
-[![Coveralls Status](https://coveralls.io/repos/github/mpaland/avl_array/badge.svg?branch=master)](https://coveralls.io/github/mpaland/avl_array?branch=master)
-[![Coverity Status](https://img.shields.io/coverity/scan/14061.svg)](https://scan.coverity.com/projects/mpaland-avl_array)
-[![Github Issues](https://img.shields.io/github/issues/mpaland/avl_array.svg)](http://github.com/mpaland/avl_array/issues)
-[![Github Releases](https://img.shields.io/github/release/mpaland/avl_array.svg)](https://github.com/mpaland/avl_array/releases)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/mpaland/avl_array/master/LICENSE)
+[![Release](https://img.shields.io/github/v/tag/mpaland/avl_array?label=release&sort=semver)](https://github.com/mpaland/avl_array/tags)
+[![CI](https://github.com/mpaland/avl_array/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/mpaland/avl_array/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/mpaland/avl_array/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/mpaland/avl_array/actions/workflows/codeql.yml)
+[![C++11](https://img.shields.io/badge/C%2B%2B-11-blue.svg?logo=cplusplus)](https://en.cppreference.com/w/cpp/11)
+[![Header only](https://img.shields.io/badge/header--only-yes-brightgreen.svg)](#highlights-and-design-goals)
+[![No heap](https://img.shields.io/badge/heap-none-brightgreen.svg)](#highlights-and-design-goals)
+[![Compilers](https://img.shields.io/badge/compilers-MSVC%20%7C%20GCC%20%7C%20Clang-informational.svg)](.github/workflows/ci.yml)
+[![Last commit](https://img.shields.io/github/last-commit/mpaland/avl_array.svg)](https://github.com/mpaland/avl_array/commits/master)
+[![Issues](https://img.shields.io/github/issues/mpaland/avl_array.svg)](https://github.com/mpaland/avl_array/issues)
+[![Stars](https://img.shields.io/github/stars/mpaland/avl_array.svg?style=social)](https://github.com/mpaland/avl_array/stargazers)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **avl_array** is a templated C++ (STL map like) container class that stores key-value data organzied as AVL-tree in a **fixed size** array.
 
@@ -14,7 +19,7 @@ Normally a `std::map` container with a static custom allocator is taken, but `st
 That being said, motivation of this container is to insert, update, delete and find random key-value elements in *static allocated* memory with highest performance and in a minimum of time.  
 It might also be the base class for an associative array container.
 
-## Highligths and design goals
+## Highlights and design goals
 - `std::map` like templated container class with increment iterator support
 - Ultra fast, maximum performance, minimum footprint and **no dependencies** (compared to `std::map`)
 - Static allocated memory (as template parameter)
@@ -167,9 +172,19 @@ After erasing a node, an iterator must be initialized again (e.g. via the `begin
 
 
 ## Test and run
-See [test coverage and audit results](test/README.md) for regression checks, sanitizer commands, and the standalone benchmark.
+The test suite in `test/test_suite.cpp` covers `avl_array` and `avl_array2`. It uses the [catch](https://github.com/catchorg/Catch2) framework for unit-tests, which is auto-adding `main()`.
+Build and run it with CMake:
 
-For testing just compile, build and run the test suite located in `test/test_suite.cpp`, it covers `avl_array` and `avl_array2`. This uses the [catch](https://github.com/philsquared/Catch) framework for unit-tests, which is auto-adding `main()`.
+```
+cmake -S . -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+The [CI](.github/workflows/ci.yml) builds and runs the tests with MSVC, GCC and Clang (Debug and Release, warnings as errors) and with the address and undefined behavior sanitizers.
+The [benchmark](test/benchmark.cpp) prints the timing of insert, update, find, erase and iterate as CSV, e.g. `build/benchmark 200` (use a Release build).
+
+To use the containers in a CMake project, add this repository via `add_subdirectory()` and link the `avl_array` target.
 
 
 ## Projects using avl_array
