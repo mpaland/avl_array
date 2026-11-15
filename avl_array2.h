@@ -69,7 +69,7 @@
  * \param Key The key type. The type (class) must provide a 'less than' and 'equal to' operator
  * \param T The Data type
  * \param size_type Container size type
- * \param Size Container size, 2^n - 1 is recommended
+ * \param Size Container size (capacity), 1 up to the maximum value of size_type, 2^n - 1 is recommended
  */
 template<typename Key, typename T, typename size_type, const size_type Size>
 class avl_array2

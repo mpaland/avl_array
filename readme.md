@@ -117,10 +117,19 @@ This class has two compile time selectable modes as template parameter `Fast` (d
 Search (find) speed is not affected by `Fast` and is always O(log n) fast.
 
 
+### Size and size_type
+`Size` is the capacity of the container. The arrays for exactly `Size` elements are part of the container object, so its memory is fixed at compile time. The rules are the same for `avl_array` and `avl_array2`:
+- `Size` must be at least 1. A `Size` of 0 or less is rejected by a `static_assert`.
+- `Size` must fit into `size_type`, because it's a template argument of this type. The highest element index is `Size - 1`, `Size` itself is used as invalid index (like `nullptr`). So `std::uint8_t` allows a `Size` up to 255, `std::uint16_t` up to 65535. A bigger value is rejected by the compiler (narrowing conversion).
+- `size_type` can be any signed or unsigned integer type. Take the smallest type which holds `Size`: `avl_array` stores two (Fast = false) or three (Fast = true) indexes of this type per element. `avl_array2` uses it only for the element counter, its overhead per element doesn't depend on it.
+- `avl_array` accepts any `Size`, e.g. 1000 is as good as 1024.
+- `avl_array2` works with any `Size` as well, all `Size` slots are usable. But a `Size` of 2^n - 1 (e.g. 255, 1023 or 65535) is recommended for a good insert performance, see [avl_array2](#avl_array2---minimal-memory).
+
+
 ## avl_array2 - minimal memory
-The current `avl_array.h` implementation has a small memory overhead for very node. This may be a problem on embedded systems with minimum RAM and rather large trees.  
+The current `avl_array.h` implementation has a small memory overhead for every node. This may be a problem on embedded systems with minimum RAM and rather large trees.  
 So I tried to push the research on the original idea, using Eytzinger's method (see [History](#history)) to store the tree: the position of a node in the array defines its parent and its childs, so **no child and no parent indexes are stored at all**. The only overhead is one byte per node.
-`avl_array2` is a second, **experimental** container class with the same interface, made for the case that memory is the most critical resource.  It passes the teat suite but its implementation involves more code.
+`avl_array2` is a second, **experimental** container class with the same interface, made for the case that memory is the most critical resource.  It passes the test suite but its implementation involves more code.
 
 ```c++
 #include <avl_array2.h>
@@ -145,7 +154,7 @@ This means for the usage:
 - `insert()` of keys in random order is as fast as in `avl_array` up to a fill level of 50 %, then it gets slower. The last free slots are expensive, because the elements up to the next free slot have to be shifted (worst case O(n) element moves).
 - `insert()` of keys in sorted order is about 2.5 times slower than in `avl_array` at any fill level, because the rotations of sorted keys happen high in the tree and move more nodes.
 - For the same `Size`, `avl_array2` always needs less memory. If a bigger `Size` is chosen to keep `insert()` fast, this advantage is gone at 1.67 times the `Size` (compared to Fast = true) or 1.44 times (Fast = false), with `int` keys and values.
-- **Use a `Size` of 2^n - 1** (e.g. 1023). With any other size the last tree level is cut by the end of the array, and its slots can only store the lowest keys. As soon as the complete levels are filled, `insert()` is as slow as in a full container.
+- **Use a `Size` of 2^n - 1** (e.g. 1023). Any other size works correctly, but the last tree level is cut by the end of the array, and its slots can only store the lowest keys. As soon as the complete levels are filled, `insert()` is as slow as in a full container. This hurts keys in sorted order most (e.g. 1000 slots: about 1 µs per insert instead of 30 to 50 ns with 2^n - 1 slots), keys in random order are only a little slower.
 - **`insert()` and `erase()` invalidate any iterators!**
 - `clear()` is an O(Size) operation.
 - There's no `Fast` template parameter, the parent of a node is calculated.

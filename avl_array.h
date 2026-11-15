@@ -48,7 +48,7 @@
  * \param Key The key type. The type (class) must provide a 'less than' and 'equal to' operator
  * \param T The Data type
  * \param size_type Container size type
- * \param Size Container size
+ * \param Size Container size (capacity), 1 up to the maximum value of size_type
  * \param Fast If true every node stores an extra parent index. This increases memory but speed up insert/erase by factor 10
  */
 template<typename Key, typename T, typename size_type, const size_type Size, const bool Fast = true>
