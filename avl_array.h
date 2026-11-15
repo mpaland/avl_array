@@ -89,13 +89,6 @@ class avl_array
       , idx_(idx)
     { }
 
-    inline tag_avl_array_iterator& operator=(const tag_avl_array_iterator& other)
-    {
-      instance_ = other.instance_;
-      idx_      = other.idx_;
-      return *this;
-    }
-
     inline bool operator==(const tag_avl_array_iterator& rhs) const
     { return instance_ == rhs.instance_ && idx_ == rhs.idx_; }
 
@@ -169,8 +162,10 @@ public:
 
 
   // ctor
+  // the child indexes are zero initialized, otherwise gcc warns about possibly uninitialized reads (-Wmaybe-uninitialized)
   avl_array()
-    : size_(0U)
+    : child_()
+    , size_(0U)
     , root_(INVALID_IDX)
   { }
 
@@ -710,7 +705,15 @@ private:
   size_type rotate_left_right(size_type node)
   {
     const size_type left             = child_[node].left;
+    if (left >= Size) {
+      // no left child, can't happen
+      return node;
+    }
     const size_type left_right       = child_[left].right;
+    if (left_right >= Size) {
+      // no left-right child, can't happen
+      return node;
+    }
     const size_type left_right_right = child_[left_right].right;
     const size_type left_right_left  = child_[left_right].left;
     const size_type parent           = get_parent(node);
@@ -756,7 +759,15 @@ private:
   size_type rotate_right_left(size_type node)
   {
     const size_type right            = child_[node].right;
+    if (right >= Size) {
+      // no right child, can't happen
+      return node;
+    }
     const size_type right_left       = child_[right].left;
+    if (right_left >= Size) {
+      // no right-left child, can't happen
+      return node;
+    }
     const size_type right_left_left  = child_[right_left].left;
     const size_type right_left_right = child_[right_left].right;
     const size_type parent           = get_parent(node);
