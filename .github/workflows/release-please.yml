@@ -1,0 +1,18 @@
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+name: release-please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      # configuration: release-please-config.json, released version: .release-please-manifest.json
+      - uses: googleapis/release-please-action@v5
