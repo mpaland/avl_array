@@ -34,6 +34,7 @@ int main(int argc, char**)
 
 namespace {
 const int capacity = 512;
+typedef std::array<int, capacity> order_type;   // indexes of the keys in insert order
 volatile std::uint64_t sink = 0;
 
 // Keep each timed operation separate so changes to insertion cannot change
@@ -46,34 +47,41 @@ volatile std::uint64_t sink = 0;
 #define AVL_BENCH_NOINLINE
 #endif
 
+// key at an index of the insert order
+template<typename Key>
+inline const Key& at(const std::array<Key, capacity>& keys, int i)
+{
+  return keys[static_cast<std::size_t>(i)];
+}
+
 template<int Operation, typename Tree, typename Key>
 AVL_BENCH_NOINLINE std::uint64_t run_operation(Tree& tree,
-  const std::array<int, capacity>& order, const std::array<Key, capacity>& keys,
+  const order_type& order, const std::array<Key, capacity>& keys,
   const std::array<Key, capacity>& misses)
 {
   std::uint64_t checksum = 0;
   switch (Operation) {
   case 0:
-    for (int i : order) checksum += tree.insert(keys[i], i);
+    for (int i : order) checksum += tree.insert(at(keys, i), i);
     break;
   case 1:
-    for (int i : order) checksum += tree.insert(keys[i], i + 1);
+    for (int i : order) checksum += tree.insert(at(keys, i), i + 1);
     break;
   case 2:
     for (int i : order) {
       int value = 0;
-      checksum += tree.find(keys[i], value);
+      checksum += tree.find(at(keys, i), value);
       checksum += static_cast<unsigned>(value);
     }
     break;
   case 3:
     for (int i : order) {
       int value = 0;
-      checksum += tree.find(misses[i], value);
+      checksum += tree.find(at(misses, i), value);
     }
     break;
   case 4:
-    for (int i : order) checksum += tree.erase(keys[i]);
+    for (int i : order) checksum += tree.erase(at(keys, i));
     break;
   default:
     for (auto it = tree.begin(); it != tree.end(); ++it) checksum += static_cast<unsigned>(*it);
@@ -94,22 +102,22 @@ template<typename Key, typename Tree>
 void measure(const char* container, bool shuffled, int rounds)
 {
   typedef Tree tree_type;
-  std::array<int, capacity> order;
+  order_type order;
   std::array<Key, capacity> keys, misses;
-  for (int i = 0; i < capacity; ++i) {
-    order[i] = i;
-    keys[i] = make_key<Key>(i);
-    misses[i] = make_key<Key>(i + capacity);
+  for (std::size_t i = 0; i < order.size(); ++i) {
+    order[i]  = static_cast<int>(i);
+    keys[i]   = make_key<Key>(static_cast<int>(i));
+    misses[i] = make_key<Key>(static_cast<int>(i) + capacity);
   }
   if (shuffled) {
     std::uint32_t state = 123456789U;
-    for (int i = capacity - 1; i > 0; --i) {
+    for (std::size_t i = order.size() - 1U; i > 0U; --i) {
       state = state * 1664525U + 1013904223U;
-      std::swap(order[i], order[state % (static_cast<unsigned>(i) + 1U)]);
+      std::swap(order[i], order[state % (i + 1U)]);
     }
   }
   const char* names[] = { "insert", "update", "find_hit", "find_miss", "erase", "iterate" };
-  typedef std::uint64_t (*operation_type)(tree_type&, const std::array<int, capacity>&,
+  typedef std::uint64_t (*operation_type)(tree_type&, const order_type&,
     const std::array<Key, capacity>&, const std::array<Key, capacity>&);
   const operation_type operations[] = {
     run_operation<0, tree_type, Key>, run_operation<1, tree_type, Key>,
@@ -123,7 +131,7 @@ void measure(const char* container, bool shuffled, int rounds)
       for (int round = 0; round < rounds; ++round) {
         tree_type tree;
         if (operation != 0) {
-          for (int i : order) tree.insert(keys[i], i);
+          for (int i : order) tree.insert(at(keys, i), i);
         }
         const auto start = std::chrono::steady_clock::now();
         std::uint64_t checksum = operations[operation](tree, order, keys, misses);
