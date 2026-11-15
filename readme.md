@@ -19,7 +19,7 @@ It might also be the base class for an associative array container.
 - Ultra fast, maximum performance, minimum footprint and **no dependencies** (compared to `std::map`)
 - Static allocated memory (as template parameter)
 - NO recursive calls
-- Small memory overhead (arround 5 byte per node in slow-mode)
+- Small memory overhead (arround 5 byte per node in slow-mode, 1 byte per node with `avl_array2`)
 - VERY clean and stable C++ code, LINT and L4 warning free, automotive ready
 - Optimized for embedded system usage
 - Very easy to use, just include "avl_array.h"
@@ -112,6 +112,51 @@ This class has two compile time selectable modes as template parameter `Fast` (d
 Search (find) speed is not affected by `Fast` and is always O(log n) fast.
 
 
+## avl_array2 - minimal memory
+The current `avl_array.h` implementation has a small memory overhead for very node. This may be a problem on embedded systems with minimum RAM and rather large trees.  
+So I tried to push the research on the original idea, using Eytzinger's method (see [History](#history)) to store the tree: the position of a node in the array defines its parent and its childs, so **no child and no parent indexes are stored at all**. The only overhead is one byte per node.
+`avl_array2` is a second, **experimental** container class with the same interface, made for the case that memory is the most critical resource.  It passes the teat suite but its implementation involves more code.
+
+```c++
+#include <avl_array2.h>
+
+// create a 1023 node tree with <int> as key and value types and <std::uint16_t> as size type
+avl_array2<int, int, std::uint16_t, 1023> avl;
+```
+
+| Container `<int, int, std::uint16_t, 1023>` | Size in bytes | Overhead per node |
+|---------------------------------------------|:-------------:|:-----------------:|
+| `avl_array`, Fast = true                    | 15352         | 7 byte            |
+| `avl_array`, Fast = false                   | 13308         | 5 byte            |
+| `avl_array2`                                | 9212          | 1 byte            |
+
+The problems of this layout are solved as follows:
+- A rotation doesn't exchange indexes, it moves the nodes of the rotated subtree to their new slots. Rotations happen mostly near the leafs, so in most cases only a few nodes are moved.
+- The tree is sparse in the array, so the slot of a new leaf can be located outside the array, even if the container is not full. If the rebalancing of this insert rotates a subtree, the rotation is done first, it lifts the new leaf into the array. If not, the free slot which is the nearest in key order is taken instead and the elements in between are shifted by one node, like inserting into a sorted array. The same is done if an erase rotation doesn't fit into the array. So no node is ever located outside the array and `Size` slots store `Size` elements, guaranteed.
+- A part of the tree can run out of free slots, while other parts still have a lot of them. If no free slot is found nearby, the free slots of an enclosing subtree are redistributed evenly. This is done in place, it moves O(n) elements, but it's rare.
+
+This means for the usage:
+- `find()` and `erase()` are faster than in `avl_array`. `find()` calculates the child slot from the result of the comparison, so there's no conditional branch per level which the CPU could mispredict.
+- `insert()` of keys in random order is as fast as in `avl_array` up to a fill level of 50 %, then it gets slower. The last free slots are expensive, because the elements up to the next free slot have to be shifted (worst case O(n) element moves).
+- `insert()` of keys in sorted order is about 2.5 times slower than in `avl_array` at any fill level, because the rotations of sorted keys happen high in the tree and move more nodes.
+- For the same `Size`, `avl_array2` always needs less memory. If a bigger `Size` is chosen to keep `insert()` fast, this advantage is gone at 1.67 times the `Size` (compared to Fast = true) or 1.44 times (Fast = false), with `int` keys and values.
+- **Use a `Size` of 2^n - 1** (e.g. 1023). With any other size the last tree level is cut by the end of the array, and its slots can only store the lowest keys. As soon as the complete levels are filled, `insert()` is as slow as in a full container.
+- **`insert()` and `erase()` invalidate any iterators!**
+- `clear()` is an O(Size) operation.
+- There's no `Fast` template parameter, the parent of a node is calculated.
+
+Time per operation in ns, `avl_array` with Fast = true / `avl_array2` (`int` keys and values, gcc -O2, x86-64). These figures are measured with new random keys in every round. The [benchmark](test/benchmark.cpp) repeats the same key sequence, which the branch prediction of the CPU learns, so its figures are lower and favour `avl_array`.
+
+| Operation                                 | 511 slots | 8191 slots |
+|-------------------------------------------|:---------:|:----------:|
+| find                                      | 27 / 7    | 50 / 13    |
+| erase                                     | 51 / 39   | 71 / 47    |
+| insert, random keys, filled up to 50 %    | 38 / 40   | 56 / 56    |
+| insert, random keys, filled up to 90 %    | 41 / 63   | 62 / 89    |
+| insert, random keys, filled up to 100 %   | 42 / 73   | 63 / 115   |
+| insert, sorted keys, filled up to 100 %   | 12 / 31   | 18 / 47    |
+
+
 ## Caveats
 Keys returned by `iterator.key()` are read-only (`const Key&`), as with C++11 `std::map`. Values remain writable through `val()` and `operator*()`. To change a key, erase and reinsert the entry.
 
@@ -124,7 +169,7 @@ After erasing a node, an iterator must be initialized again (e.g. via the `begin
 ## Test and run
 See [test coverage and audit results](test/README.md) for regression checks, sanitizer commands, and the standalone benchmark.
 
-For testing just compile, build and run the test suite located in `test/test_suite.cpp`. This uses the [catch](https://github.com/philsquared/Catch) framework for unit-tests, which is auto-adding `main()`.
+For testing just compile, build and run the test suite located in `test/test_suite.cpp`, it covers `avl_array` and `avl_array2`. This uses the [catch](https://github.com/philsquared/Catch) framework for unit-tests, which is auto-adding `main()`.
 
 
 ## Projects using avl_array

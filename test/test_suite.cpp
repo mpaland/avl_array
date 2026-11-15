@@ -39,7 +39,9 @@
 #include <utility>
 #include <vector>
 #include "../avl_array.h"
+#include "../avl_array2.h"
 #include "regression.h"
+#include "regression2.h"
 
 
 

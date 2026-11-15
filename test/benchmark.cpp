@@ -22,6 +22,7 @@ int main(int argc, char**)
   return (exercise<true>(argc) + exercise<false>(argc)) & 255;
 }
 #else
+#include <avl_array2.h>
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -89,10 +90,10 @@ template<> std::string make_key<std::string>(int value)
   return std::string(40, 'k') + std::to_string(10000 + value);
 }
 
-template<typename Key, bool Fast>
-void measure(bool shuffled, int rounds)
+template<typename Key, typename Tree>
+void measure(const char* container, bool shuffled, int rounds)
 {
-  typedef avl_array<Key, int, std::uint16_t, capacity, Fast> tree_type;
+  typedef Tree tree_type;
   std::array<int, capacity> order;
   std::array<Key, capacity> keys, misses;
   for (int i = 0; i < capacity; ++i) {
@@ -136,7 +137,7 @@ void measure(bool shuffled, int rounds)
     }
     std::sort(samples.begin(), samples.end());
     std::cout << (std::is_same<Key, int>::value ? "int" : "string") << ','
-              << Fast << ',' << (shuffled ? "shuffled" : "ascending") << ','
+              << container << ',' << (shuffled ? "shuffled" : "ascending") << ','
               << names[operation] << ',' << sizeof(tree_type) << ','
               << std::fixed << std::setprecision(2) << samples[samples.size() / 2] << '\n';
   }
@@ -146,12 +147,18 @@ void measure(bool shuffled, int rounds)
 int main(int argc, char** argv)
 {
   const int rounds = argc > 1 ? std::max(1, std::atoi(argv[1])) : 64;
-  std::cout << "key,fast,order,operation,container_bytes,median_ns_per_op\n";
+  std::cout << "key,container,order,operation,container_bytes,median_ns_per_op\n";
+  // avl_array2 is measured twice: completely filled by the 512 keys (every slot is used, the worst
+  // case for insert and erase) and with spare slots (1023 slots for the 512 keys).
   for (bool shuffled : { false, true }) {
-    measure<int, true>(shuffled, rounds);
-    measure<int, false>(shuffled, rounds);
-    measure<std::string, true>(shuffled, rounds);
-    measure<std::string, false>(shuffled, rounds);
+    measure<int, avl_array<int, int, std::uint16_t, capacity, true> >("avl_array_fast", shuffled, rounds);
+    measure<int, avl_array<int, int, std::uint16_t, capacity, false> >("avl_array_small", shuffled, rounds);
+    measure<int, avl_array2<int, int, std::uint16_t, capacity> >("avl_array2_full", shuffled, rounds);
+    measure<int, avl_array2<int, int, std::uint16_t, 2 * capacity - 1> >("avl_array2_spare", shuffled, rounds);
+    measure<std::string, avl_array<std::string, int, std::uint16_t, capacity, true> >("avl_array_fast", shuffled, rounds);
+    measure<std::string, avl_array<std::string, int, std::uint16_t, capacity, false> >("avl_array_small", shuffled, rounds);
+    measure<std::string, avl_array2<std::string, int, std::uint16_t, capacity> >("avl_array2_full", shuffled, rounds);
+    measure<std::string, avl_array2<std::string, int, std::uint16_t, 2 * capacity - 1> >("avl_array2_spare", shuffled, rounds);
   }
 }
 #endif
